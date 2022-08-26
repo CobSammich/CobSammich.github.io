@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-08-25" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-08-26" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>ch03</title>
         <link rel="stylesheet" href="../../../style.css" type="text/css"
@@ -306,13 +306,13 @@ Figure 5. The uniform-cost search algorithm.
 
 <p>The time and space complexity of uniform-cost search is defined by the following terms:</p>
 <ul>
-<li>$C^✳$: the cost of the optimal solution.</li>
+<li>$C^*$: the cost of the optimal solution.</li>
 <li>$\epsilon$: a lower bound on the cost of each action, with the constraint $\epsilon \gt 0$.</li>
 </ul>
-<p>Then this algorithm's worst base time complexity is $O\left( b^{1 + \lfloor C^✳ / \epsilon \rfloor} \right)$</p>
+<p>Then this algorithm's worst base time complexity is $O\left( b^{1 + \lfloor C^* / \epsilon \rfloor} \right)$</p>
 <p>The worst case can be much greater than $b^d$ in breadth-first search. This is because uniform-cost
 search can explore large trees of actions with low costs before exploring high-cost trees with
-useful action. When all action costs are equal, $b^{1 + \lfloor C^✳ / \epsilon \rfloor}$ is just
+useful action. When all action costs are equal, $b^{1 + \lfloor C^* / \epsilon \rfloor}$ is just
 $b^{d + 1}$</p>
 <p>Because this algorithm is explicitly looking for the lowest cost path at all times, we know this
 algorithm is cost-optimal and complete. It also uses a late goal test because it needs to wait for
@@ -383,8 +383,8 @@ two frontiers collide.</p>
 <p>The pseudocode above implements bidirectional best-first search, where we decide which node to
 explore next by the evaluation functions given for both forward and backward search. When we use the
 path cost as the evaluation function, we have implemented bidirectional uniform-cost search. For
-bidirectional uniform-cost search, the cost of the optimal path is $C^✳$, thus we will never expand
-any node $\gt \frac{C^✳}{2}$, which can speed search up considerably.</p>
+bidirectional uniform-cost search, the cost of the optimal path is $C^*$, thus we will never expand
+any node $\gt \frac{C^*}{2}$, which can speed search up considerably.</p>
 <h3>3.4.6 Comparing Uninformed Search Algorithms</h3>
 <p>The table below compares the uninformed search algorithms we learned in this section in terms of
 Completeness, optimality, time and space complexities.</p>
@@ -419,7 +419,7 @@ Completeness, optimality, time and space complexities.</p>
 <tr>
 <td>Time Complexity</td>
 <td>$O(b^d)$</td>
-<td>$O(b^{1 + \lfloor C^✳ / \epsilon \rfloor})$</td>
+<td>$O(b^{1 + \lfloor C^* / \epsilon \rfloor})$</td>
 <td>$O(b^m)$</td>
 <td>$O(b^\ell)$</td>
 <td>$O(b^d)$</td>
@@ -427,7 +427,7 @@ Completeness, optimality, time and space complexities.</p>
 <tr>
 <td>Space Complexity</td>
 <td>$O(b^d)$</td>
-<td>$O(b^{1 + \lfloor C^✳ / \epsilon \rfloor})$</td>
+<td>$O(b^{1 + \lfloor C^* / \epsilon \rfloor})$</td>
 <td>$O(bm)$</td>
 <td>$O(b\ell)$</td>
 <td>$O(bd)$</td>
