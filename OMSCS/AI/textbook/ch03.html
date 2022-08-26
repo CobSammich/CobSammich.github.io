@@ -12,10 +12,11 @@
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
     </head>
     <body>
-        <script>
+        <script type="text/x-mathjax-config">
             MathJax = {
               tex: {
-                inlineMath: [['$', '$'], ['$$', '$$']]
+                inlineMath: [['$', '$'], ["\\(", "\\)"]],
+                processEscapes: true,
               },
               svg: {
                 fontCache: 'global'
