@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>5-1</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 5 Index</a></p>
+<h1>Defining and Instantiating Structs</h1>
+<p>Structs are similar to tuples, but you can give each value in the struct a name -- also giving it
+meaning. Structs values can be accessed by their name instead of the index they are in the tuple.</p>
+<p>To define a struct, use the following syntax: <code>struct Name {</code>. The name of the struct should
+describe what it does and why all of it's values are being grouped together. Inside the struct's
+scope, we define the names of the pieces of data it contains. These are known as <em>fields</em>. Below is
+an example of a struct that contains information about a user account.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">struct</span> <span class="nc">User</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">active</span>: <span class="kt">bool</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">username</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">email</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">sign_in_count</span>: <span class="kt">u64</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>To use a struct, we create an instance of it by specifying the values for each of it's fields. Think
+like a constructor to an object in Python or Java. The code below shows how a struct would be
+initialized.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">user1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">email</span>: <span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;someone@example.com&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">        </span><span class="n">username</span>: <span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;someusername123&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">        </span><span class="n">active</span>: <span class="nc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">sign_in_count</span>: <span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>To access a value from the struct, we can use <code>user1.email</code> to get the user's email for instance. We
+can change the value of a struct by declaring it mutable: <code>let mut user1 = User {</code>.</p>
+<p>Rust does not let you mark only certain fields as mutable. You must make the full struct mutable.</p>
+<h2>Field Init Shorthand</h2>
+<p>When variables have the same name as the struct fields, we can just pass the variable in without
+specifying the field name. The two code snippets below accomplish the exact same thing: Create a
+new <code>User</code> struct and return it.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">build_user</span><span class="p">(</span><span class="n">email</span>: <span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="n">username</span>: <span class="nb">String</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">User</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">User</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">email</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">username</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">active</span>: <span class="nc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">sign_in_count</span>: <span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">build_user</span><span class="p">(</span><span class="n">email</span>: <span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="n">username</span>: <span class="nb">String</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">User</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">User</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">email</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">username</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">active</span>: <span class="nc">true</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">sign_in_count</span>: <span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Creating Instances from Other Instances with Struct Update Syntax</h2>
+<p>You can use an old instances values to create a new instance using what's known as <em>struct update
+syntax</em>. You could very easily instantiate a new struct by hardcoding in values the same way you did
+for the older instance, but this makes the code more compact.</p>
+<p>In the code below, assume there is another user named <code>user1</code> in scope and we'd like to have the
+values from user1 fill in the rest of the values for user2.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">user2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">email</span>: <span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;another@example.com&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">        </span><span class="o">..</span><span class="n">user1</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>When the code above executes, it will make <code>user1</code> invalid though because the username <code>String</code>
+would be moved from <code>user1</code> to <code>user2</code> deeming <code>user1</code> now invalid because that value in <code>user1</code> is
+invalid. If we had created a new username for <code>user2</code> as well and only used the <code>active</code> and
+<code>sign_in_count</code> values from <code>user1</code>, then <code>user1</code> would still be valid because the <code>bool</code> and <code>u64</code>
+data types both implement the <code>copy</code> trait, thus the values would be copied on the stack - not
+moved.</p>
+<h2>Using Structs Without Names to Create Different Types</h2>
+<p>You can also define <em>tuple structs</em> that provide the usefulness of naming the struct but don't name
+the fields within it. This is useful for creating object like a vertex or a RGB color value:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">struct</span> <span class="nc">Color</span><span class="p">(</span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="kt">i32</span><span class="p">);</span><span class="w"></span>
+<span class="k">struct</span> <span class="nc">Point</span><span class="p">(</span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="kt">i32</span><span class="p">);</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">blue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">)</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">origin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can access the values in a tuple without field names by specifying the index where that value
+lies. Access the green component in the above defined color: <code>blue.1</code>.</p>
+<h2>Unit-Like Structs Without Any Fields</h2>
+<p>You can define structs that don't have any fields. These are known as <em>unit-like structs</em> because
+they behave similarly to the unit type, <code>()</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">struct</span> <span class="nc">AlwaysEqual</span><span class="p">;</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">subject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AlwaysEqual</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Ownership of Struct Data</h2>
+<p>It is possible for structs to contain references to data using <code>&amp;str</code> for example, but that also
+requires knowledge of another rust concept: Lifetimes. Lifetimes will be introduced in
+<a href="../chapter10/index.md.html">chapter 10</a>. Lifetimes ensures that data referenced by a struct is valid for
+as long as the struct is. When you store references in structs, you also need to specify a lifetime.</p>
+<p><a href="5-2.html">Next Section</a></p>
+    </body>
+</html>
+
+

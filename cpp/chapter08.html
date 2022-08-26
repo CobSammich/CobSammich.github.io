@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-07-08" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>chapter08</title>
+        <link rel="stylesheet" href="../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="cpp-index.html">Back to C++ Index</a></p>
+<h1>Chapter 8 Notes - Defining Functions</h1>
+<h2>Defining Functions</h2>
+<p>Skipping some subsections here as I already know them... they include function body, function scope,
+and return values.</p>
+<h3>Function Prototypes</h3>
+<p>Also referred to as function declarations, function prototypes allow you to compile code regardless
+of where the actual function definition or body is. These are commonly found in header files.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">exponent</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Passing Arguments to a Function</h2>
+<h3>Pass-by-Value</h3>
+<p>When you pass variables into functions you are not actually passing those variables, but rather
+copies of them. Thus if you modify the copy of the variable passed to a function, you're not
+actually modifying the variable.</p>
+<p>If you wish to modify the value outside the scope of the function. You can do this using a pointer.</p>
+<h3>Passing a Pointer to a Function</h3>
+<p>When a function parameter is a pointer type, instead of creating a copy of the variable and passing
+that into the function, you are actually passing a copy of the pointer and it's address in memory
+and therefore it points to the same value in memory.</p>
+<p>If you create a function like below, we will now be changing the value within the function.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">changeIt</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">variable</span><span class="p">);</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">changeIt</span><span class="p">(</span><span class="o">&amp;</span><span class="n">it</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// value in v and result are now both 15.0</span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">double</span><span class="w"> </span><span class="nf">changeIt</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">variable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">variable</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mf">10.0</span><span class="p">;</span><span class="w">      </span><span class="c1">// modifies the original value variable points to in memory</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="n">pit</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Passing an Array to a Function</h3>
+<p>An array name is essentially a memory address, so you can pass the address of an array to a function
+just by using its name. The address of the array is copied and passed to the function. This has a
+couple of advantages:</p>
+<ol>
+<li>Passing the memory address is faster than copying all the data from within the array.</li>
+<li>You can modify the contents and address of the array within the function.</li>
+</ol>
+<p>Here you can see a function that is passed an array and computes the mean:</p>
+<div class="codehilite"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="kt">double</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">array</span><span class="p">[],</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">);</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">vals</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0</span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">average</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">mean</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">double</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">array</span><span class="p">[],</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sum</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>The second parameter <code>count</code> is essential here because we cannot obtain the size of the actual size
+of the array from the pointer alone. This causes a problem, because we are never can actually check
+if the <code>count</code> given is correct or not. Thus, we can access memory illegally if we pass in the wrong
+value for <code>count</code>.</p>
+<p>Using the <code>sizeof(array)</code> call returns the size of the pointer's memory address itself, not the size
+of the array. <code>std::size()</code> also does not compile here.</p>
+<p>You can also use pointer notation to define the <code>average()</code> function. In this case, you'd have to
+increment the pointer to iterate over it. You can also just use the array notation (see comment) as
+array and pointer notation are often interchangeable.
+Here's how pointer notation would look:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sum</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">*</span><span class="n">array</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="c1">// also can use `sum += array[i]`</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>The two function definitions below are actually the exact same to the compiler:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">array</span><span class="p">[],</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">);</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<!-- Bookmark: Bottom of 269 (Caution Section)-->
+<p>There are misconceptions about passing fixed-size arrays to functions. The function <code>average10</code>
+below was written to average ten values. The problem with this, is that if we pass in an array that
+has, say, 3 values, then this function will be accessing values clearly outside of the length 3
+array.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">average10</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">array</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sum</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="o">*</span><span class="n">array</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="c1">// also can use `sum += array[i]`</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+  Listing 1: `average10` function is misleading as it looks to attempt to only modify $10$ values
+  of an array, but the C++ compiler actually does not check that only size $10$ arrays are passed
+  to the function.
+</p>
+
+<p>Once again, even with the dimension specification, the three function declarations all come out to
+being synonymous to the compiler:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">average10</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">array</span><span class="p">[]);</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="nf">average10</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">array</span><span class="p">);</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="nf">average10</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">array</span><span class="p">[</span><span class="mi">10</span><span class="p">]);</span><span class="w"></span>
+</code></pre></div>
+
+<h3><code>const</code> Pointer Parameters</h3>
+<p>Using the same <code>average</code> function above as an example - it only needs to access values of the array
+elements; it doesn't change them nor should it. Because of this, we can make sure the code is not
+able to modify the contents of the pointer using the <code>const</code> keyword:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">average</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">sum</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="c1">// also can use `sum += array[i]`</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>The compiler will check that the array elements are not being modified within the function.</p>
+<h3>Passing a Multidimensional Array to a Function</h3>
+<p>Suppose you have a two-dimensional array like below:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">beans</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+</code></pre></div>
+
+<p>To pass a multidimensional array to a function, the function declaration would look like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">yield</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">beans</span><span class="p">[][</span><span class="mi">4</span><span class="p">],</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>You could specify the first array dimension, but it once again makes no difference to the compiler.
+Any array with a second dimension of size 4 can be passed to this array.</p>
+<h3>Pass-by-Reference</h3>
+<p>The book mentioned that a <em>reference</em> is an alias for another variable... not sure what they mean.</p>
+<p>A function parameter can be a reference as well, in which the function uses the <em>pass-by-reference</em>
+mechanism with the argument. Whenever the parameter is used in the body of the function, it is
+accessing the argument value directly.</p>
+<p>A reference is specified by adding <code>&amp;</code> after the type name. For example, a type of <code>string&amp;</code> is a
+reference to a <code>string</code>. A function that uses a reference parameter is like calling a function where
+the argument is passed by value. Using references improves performance though as we do not need to
+copy the value.</p>
+<blockquote>
+<p>At this point I am confused, because it says pass by reference, but then it also says the argument
+is passed by value... I thought a reference can modify the variable within the function.</p>
+<p>I just checked this using the following code and it does modify the original value:</p>
+</blockquote>
+<div class="codehilite"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">multBy2</span><span class="p">(</span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.3</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">multBy2</span><span class="p">(</span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">value</span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">multBy2</span><span class="p">(</span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">value</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w">     </span><span class="c1">// Modifies the original value</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">value</span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h3>References vs. Pointers</h3>
+<p>As the previous section's initial sentence indicated, I was struggling a bit to understand the
+difference between a pointer and a reference. In many ways they are similar. Take a look at the code
+snippet and list of differences below:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Ex8_07.cpp</span>
+<span class="c1">// Modifying the value of a caller variable – references vs pointers</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">change_it_by_pointer</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">reference_to_it</span><span class="p">);</span><span class="w">    </span><span class="c1">// Pass pointer (by value)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">change_it_by_reference</span><span class="p">(</span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">reference_to_it</span><span class="p">);</span><span class="w">  </span><span class="c1">// Pass by reference</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="p">{</span><span class="mf">5.0</span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="n">change_it_by_pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="n">it</span><span class="p">);</span><span class="w">       </span><span class="c1">// Now we pass the address</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;After first function execution, it = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">change_it_by_reference</span><span class="p">(</span><span class="n">it</span><span class="p">);</span><span class="w">      </span><span class="c1">// Now we pass a reference, not the value!</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;After second function execution, it = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">change_it_by_pointer</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">pit</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">pit</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mf">10.0</span><span class="p">;</span><span class="w">         </span><span class="c1">// This modifies the original double</span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">change_it_by_reference</span><span class="p">(</span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pit</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">pit</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mf">10.0</span><span class="p">;</span><span class="w">          </span><span class="c1">// This modifies the original double as well!</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<ul>
+<li>To pass a pointer, you need to take the address of a value, while pass-by-reference you can just
+  pass the variable as is.</li>
+<li>Using the pointer, you also need to dereference the memory address within the function to access
+  the actual value it points to.</li>
+</ul>
+<p>Other than syntax, these two methods do the same thing and the compiler more or less treats them the
+same. However, they have one distinctive feature; a pointer can be a <code>nullptr</code>, whereas a reference
+must always refer to something. If you want to utilize a <code>nullptr</code>, then you must use a pointer.
+This means that in your code, you must always check if a pointer is <code>nullptr</code> before accessing it.
+Thus, references have the advantage that you do not need to check for <code>nullptr</code>.</p>
+<p>The book then mentions that using references can cause surprises or bugs, because passing in a
+variable by reference looks the same as passing a variable normally, thus the variable might change
+without thinking it would. They recommend always using a <code>const</code> keyword in front of a reference
+variable if you do not want the function to modify the variable.</p>
+<blockquote>
+<p>Last sentence of this section: "Passing arguments by reference-to-<code>const</code> is generally preferred
+  over passing a pointer-to-<code>const</code> value."</p>
+</blockquote>
+<h3>Input vs. Output Parameters</h3>
+<p>The book defines two types of function parameters: <strong>input</strong> and <strong>output</strong> parameters.</p>
+<ul>
+<li>Input parameters are never modified inside functions, whereas Output parameters <em>are</em> modified.</li>
+<li>Because Input parameters are not modified within functions, they should always be passed as
+  pass-by-reference-to-<code>const</code> or pass-by-value.</li>
+<li>Because Output parameters are modified by the function, they should be passed to functions as
+  reference-to-non-<code>const</code>.</li>
+</ul>
+<h3>Passing Arrays by Reference</h3>
+<p>Passing arrays by reference may seem redundant, as passing by value already does not copy the array
+elements and allows you to modify the contents.</p>
+<p>There actually is a benefit though. Recall earlier in the chapter, when we were working with passing
+arrays to functions, and we could not specify the array's first dimension in a function signature
+(at least not in a way that the compiler enforces only arrays of that size are passed in). You can
+accomplish this by passing arrays by reference.</p>
+<p>See the code snippet below. It changes the function definition of Listing 1 to use
+pass-by-reference-to-<code>const</code>, as we do not want to modify the array and do not want to copy
+elements.</p>
+<div class="codehilite"><pre><span></span><code><span class="cm">/* Only arrays of length 10 can be passed! */</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="nf">average10</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">array</span><span class="p">)[</span><span class="mi">10</span><span class="p">])</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="p">{};</span><span class="w">                       </span><span class="c1">// Accumulate total in here</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w">                   </span><span class="c1">// Sum array elements</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w">                     </span><span class="c1">// Return average</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+    Listing 2: `average10` function now uses pass-by-reference-to-`const`, with a specified first
+    dimension of length $10$, such that we can only pass arrays of length 10 into `average10`.
+</p>
+
+<p>The parenthesis around the <code>&amp;array</code> is required, otherwise we won't be able to compile.</p>
+<p>A <strong><em>BIG</em></strong> improvement in passing an array by reference, is that now we actually <em>can</em> use either
+<code>sizeof()</code>, <code>std::size()</code>, and range-based for loops to iterate over the array. This was not
+possible with pass-by-value. Doing this, we can remove the hard-coded <code>10</code> values:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="nf">average10</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">array</span><span class="p">)[</span><span class="mi">10</span><span class="p">])</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="p">{};</span><span class="w">                       </span><span class="c1">// Accumulate total in here</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">array</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">size</span><span class="p">(</span><span class="n">array</span><span class="p">);</span><span class="w">       </span><span class="c1">// Return average</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h3>References and Implicit Conversions</h3>
+<p>C++ programs will typically assist you with type conversions that make sense, such as int to double.
+For functions that use pass-by-value, they also can handle these implicit conversions. However,
+attempting to modify a differently typed variable that was passed by reference to a function will
+result in a compiler error as the value in memory may be differently sized in terms of bytes. For
+example, if we tried to modify an int (4 bytes) that was passed into a function by reference as a
+double (8 bytes), we would then need to convert it back to an int to preserve it's original type.
+This could cause a loss of information -- in this case at least the decimal values would be lost.
+You may think this is fine, but the C++ developers decided it "would be a bridge too far".</p>
+<p>Take the following code snippet for example. It attempts to convert the int $456$ to a double inside
+<code>double_it</code> and then, well, double the value of it. However, the code will not compile as it would
+then need to convert that doubled value $912.0$ back to an int afterward, which you'd think isn't a
+huge deal, but in the case where it isn't a literal integer you would be losing information and thus
+is considered to be undesired behavior.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Ex8_10.cpp</span>
+<span class="c1">// Implicit conversions of reference parameters</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">double_it</span><span class="p">(</span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">it</span><span class="p">)</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">print_it</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">it</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">d</span><span class="p">{</span><span class="mi">123</span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="n">double_it</span><span class="p">(</span><span class="n">d</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">print_it</span><span class="p">(</span><span class="n">d</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">{</span><span class="mi">456</span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// double_it(i);        /* error, does not compile! */</span>
+<span class="w">    </span><span class="n">print_it</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>One might wonder if you can then switch what's happening here. That is if you can pass a double to a
+function that takes an int passed by reference modify it and return a double. After all, you
+wouldn't be losing information as you're increasing the number of bits the output parameter would
+contain. However, that is not the case -- probably for the best though.</p>
+<h3>String Views: The New Reference-to-const-string</h3>
+<p>As explained previously, passing strings that will not be modified should be passed as
+<code>const string&amp;</code> as to not copy them. However, <code>const string&amp;</code> have some shortcomings. Take the code
+snippet below for example:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">find_words</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">words</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">separators</span><span class="p">);</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">text</span><span class="p">;</span><span class="w">                                 </span><span class="c1">// The string to be searched</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Enter some text terminated by *:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">getline</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;*&#39;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">words</span><span class="p">;</span><span class="w">                        </span><span class="c1">// Words found</span>
+<span class="w">    </span><span class="c1">// pass string literal to `const string&amp;` parameter</span>
+<span class="w">    </span><span class="n">find_words</span><span class="p">(</span><span class="n">words</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; ,;:.</span><span class="se">\&quot;</span><span class="s">!?&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">list_words</span><span class="p">(</span><span class="n">words</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>This compiled somewhat surprisingly because the string literal passed the third parameter is not a
+reference to a <code>std::string</code>, but we are passing it a string literal. This works because under the
+hood, the code is referring not to the string literal, but to some location in memory that the
+compiler has implicitly created somewhere in memory. Because of this, the string literal that was
+passed to this function was actually copied, which is exactly what we wanted to avoid.</p>
+<p>To avoid copying strings into functions like this, we can use <code>std::string_view</code>, a type defined in
+the <code>string_view</code> header. <code>std::string_view</code> acts similarly to values of type <code>const std::string</code>.
+<code>std::string_view</code> objects can never be modified, making them inherently <code>const</code>.</p>
+<blockquote>
+<p>My understanding of what it does under the hood is that it just points to any character sequence
+(like <code>char*</code>), but it allows you to use things like <code>std::size</code> on the variable.</p>
+</blockquote>
+<p>To cap off this subsection, keep in mind that <code>std::string</code>s copy characters when created,
+implicitly or explicitly, and <code>std::string_view</code>s don't.</p>
+<h4>Using String View Function Parameters</h4>
+<p>Fixing the function definition for the <code>find_words</code> function above, we can define it the following
+way:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">find_words</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">words</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span><span class="w"> </span><span class="n">separators</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>An example of when this might be useful is displayed below. We read in a very large amount of text
+from a file into a C-style character array. Because it is C-style string and not <code>std::string</code>, we
+cannot pass it in as a <code>const std::string&amp;</code>. Passing this in with a <code>string_view</code> object allows us
+to not copy it.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ReadHugeTextFromFile</span><span class="p">();</span><span class="w">       </span><span class="c1">// last character in text array is null (&#39;\0&#39;)</span>
+<span class="n">find_words</span><span class="p">(</span><span class="n">words</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; ,;:.</span><span class="se">\&quot;</span><span class="s">!?&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">delete</span><span class="p">[]</span><span class="w"> </span><span class="n">text</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Default Argument Values</h2>
+<p>You can define default arguments in C++ in a similar way to python. Here is an example of using a
+default <code>string_view</code> object.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">show_error</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Program Error&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can call this function with or without the argument defined:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">show_error</span><span class="p">()</span><span class="w">                    </span><span class="c1">// outputs &quot;Program Error&quot;</span>
+<span class="n">show_error</span><span class="p">(</span><span class="s">&quot;Nothing Works!&quot;</span><span class="p">)</span><span class="w">    </span><span class="c1">// outputs &quot;Nothing works!&quot;</span>
+</code></pre></div>
+
+<p>Instead of passing by value like above, you can specify default values for reference parameters
+similarly:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">show_error</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Program Error&quot;</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>However, you cannot define it as a reference-to-non-<code>const</code> as that would require an implicit
+conversion described in the previous section.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">show_error</span><span class="p">(</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Program Error&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// does not compile</span>
+</code></pre></div>
+
+<h3>Multiple Default Parameter Values</h3>
+<p>Like python, all parameters that have default values must be placed at the end of the function
+declaration. When a default argument is omitted from a function call, all the following arguments
+must also be omitted. <strong>Therefore, all default parameters in a function declaration should be
+sequenced from the least likely to be omitted to the most likely</strong></p>
+<p>Here's an example of a function that uses multiple default parameters for printing and formatting
+data in a list:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// The function prototype including defaults for parameters</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">show_data</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">data</span><span class="p">[],</span><span class="w"></span>
+<span class="w">               </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span><span class="w"> </span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Data Values&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="kt">size_t</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"></span>
+<span class="w">               </span><span class="kt">size_t</span><span class="w"> </span><span class="n">perLine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Arguments to <code>main()</code></h2>
+<p><code>main()</code> can be defined with no parameters, but it also accepts parameters <code>int argc</code> and <code>char*
+argv[]</code> which corresponds to arguments read in by the command line.</p>
+<ul>
+<li><code>argc</code> defines the number of string arguments that were found on the command line.</li>
+<li><code>argv</code> is an array of pointers to the command-line arguments, including the program name. All
+  command line arguments are received as C-style strings.</li>
+</ul>
+<p>The first element in <code>argv</code>, <code>argv[0]</code> is always the program name, while the last element,
+<code>argv[argc]</code> is always <code>nullptr</code>, so the number of elements in <code>argv</code> will be <code>argc + 1</code>.</p>
+<p>Entering the following to the command line:</p>
+<div class="codehilite"><pre><span></span><code>./myprogram <span class="m">2</span> <span class="m">3</span>.5 <span class="s2">&quot;Rip Van Winkle&quot;</span>
+</code></pre></div>
+
+<p>Will result in the following values for <code>argc</code> and <code>argv</code>:</p>
+<table>
+<thead>
+<tr>
+<th>variable</th>
+<th>key</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>argc</code></td>
+<td><code>"4"</code></td>
+</tr>
+<tr>
+<td><code>argv[0]</code></td>
+<td><code>"./myprogram"</code></td>
+</tr>
+<tr>
+<td><code>argv[1]</code></td>
+<td><code>"2"</code></td>
+</tr>
+<tr>
+<td><code>argv[2]</code></td>
+<td><code>"3.5"</code></td>
+</tr>
+<tr>
+<td><code>argv[3]</code></td>
+<td><code>"Rip Van Winkle"</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Returning Values from a Function</h2>
+<p>Returning basic types is straightforward -- Let's talk about more complex return values.</p>
+<h3>Returning Values from a Function</h3>
+<p>returned pointers must contain either <code>nullptr</code> or an address that is still valid within the
+function -- variable pointed to must still be in scope after the return to the calling function.</p>
+<blockquote>
+<p>Basically never return the address of an automatic, stack-allocated local variable from a function</p>
+</blockquote>
+<p>For example, let's say you define a function that returns the address of the larger of two values
+passed in by argument. <strong>You can use this on the left of an assignment</strong>, such that you change the
+variable that contains the larger value:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="nf">larger</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">larger</span><span class="p">(</span><span class="o">&amp;</span><span class="n">value1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">value2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w">  </span><span class="c1">// set the larger value to 100</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>You must make sure you are dereferencing the pointers in the <code>if</code> statement, otherwise you'd be
+comparing the two variables memory addresses.</p>
+<p>The book then goes into detail for 2 pages about making several functions that, in combination,
+normalize an array of data. These functions return the pointer to the data as it follows the set of
+steps to normalize an array between $0$ and $1$.</p>
+<ol>
+<li>Finds smallest value in the array</li>
+<li>Finds largest value in the array</li>
+<li>"Shifts" all the values in the array by the smallest value found in step 1, such that the minimum
+   value in the array is now $0$</li>
+<li>Scales all values in the array down by the largest value. Leaving us with an normalized array.</li>
+</ol>
+<h3>Returning a Reference</h3>
+<p>Returning pointers can be problematic as they can potentially be null, then dereferencing a
+<code>nullptr</code> will kill your program. A solution to this is to return a <em>reference</em>.</p>
+<blockquote>
+<p>Once again, never return a reference to a variable local to a function.</p>
+<p>It kind of seems like reference are the shit compared to pointers.</p>
+</blockquote>
+<p>Implementing a <code>larger</code> function that checks for the "larger string" (whatever that means) is
+implemented below:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">larger</span><span class="p">(</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s1</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">s2</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">string</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;abcx&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// changes this to &quot;defg&quot;</span>
+<span class="n">string</span><span class="w"> </span><span class="n">str2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;abcf&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="n">larger</span><span class="p">(</span><span class="n">str1</span><span class="p">,</span><span class="w"> </span><span class="n">str2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;defg&quot;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Return Type Deduction</h3>
+<p>You can let the compiler deduce the type of a return value just like it does when defining a
+variable. The following function will determine that the return value should be <code>int</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">auto</span><span class="w"> </span><span class="n">getAnswer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Working with Optional Values</h2>
+<p>Sometimes you'll encounter input arguments to functions that are optional or functions that can
+return a value only if nothing went wrong. Consider the following function declaration:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">find_last_in_string</span><span class="p">(</span><span class="n">string_view</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">char_to_find</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">start_index</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>This function searches a string backwards from the given <code>start_index</code> for the given <code>char_to_find</code>
+and returns the index in the string at which it was found. However, what happens when the character
+is not present in the string? Ans what about if we want the function to search the entire string?</p>
+<p>Here you can specify the default value of <code>start_index</code> to be $-1$ then handle the logic for this
+within the function.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">find_last_in_string</span><span class="p">(</span><span class="n">string_view</span><span class="w"> </span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">char_to_find</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">start_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>Another example is if we want to read from a config file and find a specific keyword. What if that
+keyword is not in the config file. The book mentions two common workarounds. I personally like the
+2nd better.</p>
+<ol>
+<li>Returns the 'default' value provided by the caller if the override is not found</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">read_configuration_override</span><span class="p">(</span><span class="n">string_view</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">string_view</span><span class="w"> </span><span class="n">overrideName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="k">default</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<ol>
+<li>Puts the override in the output parameter if found and return true; or return false otherwise</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="nf">read_configuration_override</span><span class="p">(</span><span class="n">string_view</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">string_view</span><span class="w"> </span><span class="n">overrideName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>These workarounds, well, work, but C++17 now offers <code>std::option&lt;&gt;</code>.</p>
+<h3><code>std::optional</code></h3>
+<p>Now consider the revisions to the two functions mentioned above using <code>std::optional&lt;int&gt;</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">optional</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">find_last_in_string</span><span class="p">(</span><span class="n">string_view</span><span class="w"> </span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">to_find</span><span class="p">,</span><span class="w"> </span><span class="n">optional</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">start_index</span><span class="p">);</span><span class="w"></span>
+<span class="n">optional</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">read_configuration_override</span><span class="p">(</span><span class="n">string_view</span><span class="w"> </span><span class="n">fileName</span><span class="p">,</span><span class="w"> </span><span class="n">string_view</span><span class="w"> </span><span class="n">overrideName</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>Now we've explicitly stated that these parameters are optionally returned. This is much cleaner and
+easier to use.</p>
+<p>Here is the find_last function that uses <code>std::optional</code> as its return value and as a function
+parameter. This example also shows multiple ways to check if a value is present in the
+<code>std::optional</code> return values.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">optional</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">find_last</span><span class="p">(</span><span class="n">string_view</span><span class="w"> </span><span class="n">string</span><span class="p">,</span><span class="w"></span>
+<span class="w">                           </span><span class="kt">char</span><span class="w"> </span><span class="n">to_find</span><span class="p">,</span><span class="w"></span>
+<span class="w">                           </span><span class="n">optional</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">start_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">);</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Growing old is mandatory; growing up is optional.&quot;</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">optional</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">found_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find_last</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;a&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">found_a</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Found the last a at index &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="o">*</span><span class="n">found_a</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">found_b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find_last</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;b&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">found_b</span><span class="p">.</span><span class="n">has_value</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Found the last b at index &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">found_b</span><span class="p">.</span><span class="n">value</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// const size_t found_c{ find_last(string, &#39;c&#39;) };     /* error: cannot convert to size_t */</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">found_early_i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find_last</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;i&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">found_early_i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Found an early i at index &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="o">*</span><span class="n">found_early_i</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">optional</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">find_last</span><span class="p">(</span><span class="n">string_view</span><span class="w"> </span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">to_find</span><span class="p">,</span><span class="w"> </span><span class="n">optional</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">start_index</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// code below will not work for empty strings</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">string</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span><span class="w">         </span><span class="c1">// or: &#39;return optional&lt;size_t&gt;{};&#39;</span>
+<span class="w">                                 </span><span class="c1">// or: &#39;return {};&#39;</span>
+<span class="w">  </span><span class="c1">// determine the starting index for the loop that follows:</span>
+<span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">start_index</span><span class="p">.</span><span class="n">value_or</span><span class="p">(</span><span class="n">string</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// never use while (index &gt;= 0) here, as size_t is always &gt;= 0!</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">to_find</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">index</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nullopt</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="o">--</span><span class="n">index</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Static Variables</h2>
+<p>You can define variables within functions that continue to exist until the program terminates. For
+example if you define a static value <code>count</code> within a function to count the number of times that
+function has been called:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">nextInteger</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="o">++</span><span class="n">count</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>The variable <code>count</code> within <code>nextInteger</code> would constantly hold the number of times that function
+has been called.</p>
+<blockquote>
+<p>This concept is a bit weird to me and I am unsure when we would ever really want to use it besides
+the example they gave.</p>
+</blockquote>
+<h2>Inline Functions</h2>
+<p>When compiling functions, the overhead of the code that comes with passing arguments and returning a
+result is significant compared to the actual code in the body of the function. Using the <code>inline</code>
+parameter you can suggest to the compiler that it should replace the function call with the code
+from the body of the function. **This could possibly make the program shorter and/or faster.</p>
+<p>Here is an example of how to define an <code>inline</code> function.</p>
+<div class="codehilite"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">larger</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>When a function is specified as <code>inline</code>, the definition must be available in every source file that
+calls the function. Because of this, <code>inline</code> functions usually appear in header files rather than
+source files and the header file is included in each source file that uses that function.</p>
+<h2>Function Overloading</h2>
+<p>Function overloading is when you define multiple functions with the same name, but could take
+different parameters or types. One would use this when they want to have a function that handles
+both int and float array types. You can always define functions with the same name as long as their
+parameter lists are different from each other. Return types cannot be the only different in the
+function definition.</p>
+<p>The code snippet below overloads the function <code>largest</code> for $4$ different data structures: array of
+doubles, vector of doubles, vector of ints and a string.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Function prototypes</span>
+<span class="kt">double</span><span class="w"> </span><span class="nf">largest</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">data</span><span class="p">[],</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">);</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="nf">largest</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">);</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">largest</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">);</span><span class="w"></span>
+<span class="n">string</span><span class="w"> </span><span class="nf">largest</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">words</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Overloading and Reference Parameters</h3>
+<p>After reading this section, in my opinion you should <strong>NEVER</strong> overload a function with both
+<code>data_type</code> and the reference <code>data_type&amp;</code>. When you try to call either function, you would be
+passing in those parameters the same way, so which one does the compiler call? This is unsafe.</p>
+<p><a href="chapter09.html">To Chapter 9</a></p>
+    </body>
+</html>
+
+

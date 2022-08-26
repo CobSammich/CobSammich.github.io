@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>9-2</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 9 Index</a></p>
+<h1>Recoverable Errors with <code>Result</code></h1>
+<p>In many cases, we encounter errors that don't require us to stop the program entirely. In cases like
+these, we can develop our program to handle these errors and respond accordingly.</p>
+<p>Recall in chapter 2 that the <code>Result</code> enum has two variants: <code>Ok</code> and <code>Err</code>. <code>Result&lt;T, E&gt;</code> has
+generic types so that it can be called in various situations. The enum declaration from the standard
+libraru is shown in Listing 1. Note that the generic type <code>T</code> will be returned in a success case,
+while the generic type <code>E</code> will be returned in a failure case.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">enum</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">E</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">T</span><span class="p">),</span><span class="w"></span>
+<span class="w">    </span><span class="nb">Err</span><span class="p">(</span><span class="n">E</span><span class="p">),</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 1: Standard Library declaration of `Result`.
+</p>
+
+<p>Listing 2 below shows us a program that opens a file using the <code>File::open</code> function. This function
+returns a <code>Result</code>. The types of <code>T</code> and <code>E</code> are <code>std::fs::File</code>, (a file handle), and
+<code>std::io::Error</code> respectively.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span>::<span class="n">File</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 2: Calling a function that returns a type `Result`.
+</p>
+
+<p>In the code above, two things can happen:</p>
+<ol>
+<li>The already present file <code>hello.txt</code> is opened for writing or writing.</li>
+<li>The file does not exist.</li>
+</ol>
+<p>Because the variable <code>f</code> is a <code>Result</code> enum, it tells us which one of the two cases we have as
+either <code>Ok</code> or <code>Err</code>.</p>
+<p>Listing 3 shows how we would likely handle the two cases. In the case of success, return the inner
+<code>file</code> value out of the <code>Ok</code> value and assign that file handle to the variable <code>f</code>. In the case of
+failure (file not found error, etc), make our program panic using the <code>panic!</code> macro.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span>::<span class="n">File</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nb">Err</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Problem opening the file: {:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">),</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 3: Using a `match` expression to handle the `Result` type returned from trying to access the
+file `hello.txt`
+</p>
+
+<h2>Matching on Different Errors</h2>
+<p>Listing 3 panics no matter why <code>File::open</code> failed. We can actually check for different failure
+reasons and handle those cases differently. For example, if the file does not exist, then let's
+create the file. If opening the file failed for any other reason (if the user does not have
+permissions to the file), then we can still handle that case by panicking. Listing 4 shows how we
+might handle the cases we just described by using a nested <code>match</code> expression:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span>::<span class="n">File</span><span class="p">;</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="n">ErrorKind</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nb">Err</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">error</span><span class="p">.</span><span class="n">kind</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// file not found, then create it</span>
+<span class="w">            </span><span class="n">ErrorKind</span>::<span class="n">NotFound</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">File</span>::<span class="n">create</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="nb">Ok</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">fc</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nb">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Problem creating the file: {:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">),</span><span class="w"></span>
+<span class="w">            </span><span class="p">},</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// any other error than file not foun</span>
+<span class="w">            </span><span class="n">other_error</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Problem opening the file: {:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">other_error</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 4: Handling different kinds of errors when trying to open a file.
+</p>
+
+<p>The <code>io::Error</code> type under the <code>Result::Err</code> variant is a struct that has the method <code>kind</code>, which
+we called in Listing 4 to get an <code>io::ErrorKind</code> enum. This enum has variants representing the
+different kinds of errors that might result from <code>io</code> operations. In our example, we used the
+<code>ErrorKind::NotFound</code> to catch cases where files don't exist yet.</p>
+<p>In the inner <code>match</code> expression, we check if the error we got was of the <code>ErrorKind::NotFound</code>
+variant, and if it is, we create the file using <code>File::create</code>. However, because <code>File::create</code> can
+also fail, we need to use a second match expression to check the result of the file creation.</p>
+<p>All these match expressions make the code a bit of an eyesore to read... A "more seasoned rustacean"
+would likely write the above code like it is in Listing 5 below.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span>::<span class="n">File</span><span class="p">;</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="n">ErrorKind</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">).</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">|</span><span class="n">error</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">error</span><span class="p">.</span><span class="n">kind</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ErrorKind</span>::<span class="n">NotFound</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">File</span>::<span class="n">create</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">).</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">|</span><span class="n">error</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Problem creating the file: {:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="p">})</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Problem opening the file: {:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 5: Same functionality as Listing 4, but with if statements and `Result` shortcut methods.
+</p>
+<p>Chapter 13 talks more about closures (which I am assuming is the <code>|error|</code> parts in Listing 5).
+Using methods like Listing 5 can help clean up huge nested <code>match</code> expressions when dealing with
+errors.</p>
+<h2>Shortcuts for Panic on Error: <code>unwrap</code> and <code>expect</code></h2>
+<p>Using <code>match</code> can be very verbose in most cases. The <code>Result&lt;T, E&gt;</code> type has many helper methods
+that can be a shortcut instead of using <code>match</code>. One method is <code>unwrap</code>, which will return the
+value inside of <code>Ok</code>. If the result is <code>Err</code> then <code>unwrap</code> will call the <code>panic!</code> macro.</p>
+<p>Listing 6 shows an example of using the <code>unwrap</code> method on the result of opening the file
+<code>hello.txt</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span>::<span class="n">File</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 6: Using the `unwrap` method to get the `Result` of opening the file hello.txt.
+</p>
+
+<p>Another method we can use is <code>expect</code>, which is similar to <code>unwrap</code>, but instead lets us choose the
+<code>panic!</code> error message printed. An example of this is in Listing 7:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">).</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Failed to open hello.txt&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 7: Using the `expect` method to get the `Result` of opening the file hello.txt and returning
+the given string if it does not open the file.
+</p>
+
+<h2>Propagating Errors</h2>
+<p>When writing functions that can cause an error, sometimes it is useful to return the error to the
+code that called it, and have it decide what to do. This is known as <em>propogating</em> the error and it
+gives more control to the calling code where there may be more information to dictate how the error
+should be handled than what is available in the context of the function.</p>
+<p>Listing 8 shows an example function where username is supposed to be read from a file. If the file
+doesn't exist or if it cannot read anything from the file, then it returns those errors.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span>::<span class="n">File</span><span class="p">;</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="p">{</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">Read</span><span class="p">};</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">read_username_from_file</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nb">Result</span><span class="o">&lt;</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="n">io</span>::<span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// return error -- cannot open file</span>
+<span class="w">        </span><span class="nb">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">e</span><span class="p">),</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">read_to_string</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// return error -- cannot find string in file.</span>
+<span class="w">        </span><span class="nb">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">e</span><span class="p">),</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 8: Function that returns an error if it occurs.
+</p>
+
+<p>The function <code>read_username_from_file</code> in the code above returns a <code>Result</code> value. If nothing goes
+wrong in the code, it returns a String inside of an <code>Ok()</code> result with the username, otherwise it
+will return a <code>Err</code> with the error code given inside it.</p>
+<h2>Shortcut for Propogating Errors: The <code>?</code> Operator</h2>
+<p>The <code>match</code> statements in Listing 8 are so common that Rust has an easier implementation of it: the
+<code>?</code> operator.</p>
+<p>Listing 9 shows how the <code>read_username_from_file</code> function would work with the <code>?</code> operator.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">read_username_from_file</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nb">Result</span><span class="o">&lt;</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="n">io</span>::<span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">f</span><span class="p">.</span><span class="n">read_to_string</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 9: `read_username_from_file` function implemented using the `?` operator.
+</p>
+
+<p>The <code>?</code> placed after a <code>Result</code> value works similarly to the <code>match</code> expressions in Listing 8: If
+the result is <code>Ok</code>, then it returns the value inside <code>Ok</code>. If the value is an <code>Err</code>, then the <code>Err</code>
+will be returned from the whole function.</p>
+<p>The <code>?</code> operator eliminates a lot of boilerplate code and makes it easier to read. Obviously we
+could make the function even shorter by chaining the two method calls after the <code>?</code>.</p>
+<h3>The <code>?</code> Operator Can Be Used in Functions That Return <code>Result</code></h3>
+<p>The <code>?</code> can only be used in functions that return a <code>Result</code> or an <code>Option</code>. If we tried to use the
+<code>?</code> operator on a <code>Result</code> in the main function, we would not be able to compile it. The <code>main</code>
+function is "special" in the way that there are restrictions on what its return type must be. The
+return type for main is <code>()</code>, and another is <code>Result&lt;T, E&gt;</code>, so we can just change the return type
+of <code>main</code> to use the <code>?</code> operator inside it:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">error</span>::<span class="n">Error</span><span class="p">;</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span>::<span class="n">File</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span><span class="w"> </span><span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span><span class="w"> </span><span class="n">Error</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&quot;hello.txt&quot;</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 10: Changing return type of `main` so we can use the `?` operator in it.
+</p>
+
+<p>The `Box<dyn Error> type is called a trait object, which is discussed in Chapter 17. For now, take
+it to mean "any kind of error".</p>
+<p><a href="9-3.html">Next Section (9.3)</a></p>
+    </body>
+</html>
+
+

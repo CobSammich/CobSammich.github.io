@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-03-31" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>chapter02</title>
+        <link rel="stylesheet" href="../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="cpp-index.html">Back to C++ Index</a></p>
+<h1>Chapter 2 Notes - Introducing Fundamental Types of Data</h1>
+<p>This chapter covers the following concepts:</p>
+<ul>
+<li>Variables, Data, and Data Types,</li>
+<li>Integer Literals</li>
+<li>Calculations with Integers</li>
+<li>Assignment Operations</li>
+<li>The <code>sizeof</code> Operator</li>
+<li>Incrementing and Decrementing Integers</li>
+<li>Defining Floating-Point Variables</li>
+<li>Floating Point Literals</li>
+<li>Floating Point Calculations</li>
+<li>Formatting Stream Output</li>
+<li>Mixes Expressions and Type Conversion</li>
+<li>Explicit Type Conversion</li>
+<li>Finding the limits</li>
+<li>Working with Character Variables</li>
+<li>The <code>auto</code> Keyword</li>
+</ul>
+<h2>Variables, Data, and Data Types</h2>
+<h3>Defining Integer Variables</h3>
+<p>One can define integers using one of three syntaxes:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">apple_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="n">apple_count</span><span class="w"> </span><span class="p">{</span><span class="mi">15</span><span class="p">};</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">apple_count</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>Integers can, well only be integers, but they can be defined as a float in some intialization
+syntaxes. The compiler handles the different assignment operations differently:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">banana_count</span><span class="p">(</span><span class="mf">7.5</span><span class="p">);</span><span class="w">         </span><span class="c1">// May compile without warning</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">coconut_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5.3</span><span class="p">;</span><span class="w">       </span><span class="c1">// May compile without warning</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">papaya_count</span><span class="p">{</span><span class="mf">0.3</span><span class="p">};</span><span class="w">         </span><span class="c1">// At least a compiler warning, often an error</span>
+</code></pre></div>
+
+<p>In the cases where the compiler does not complain, the floating point values get rounded down to the
+nearest integer value. <code>banana_count</code> will be $7$, and <code>coconut_count</code> will be $5$.</p>
+<p>You can also define and initialize multiple variables on a single line:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">foot_count</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">},</span><span class="w"> </span><span class="n">toe_count</span><span class="w"> </span><span class="p">{</span><span class="mi">10</span><span class="p">},</span><span class="w"> </span><span class="n">head_count</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>Although this is valid to the compiler, it is considered best practice to define each variable on
+it's own line as it is considered more readable.</p>
+<h3>Signed Integer Types</h3>
+<p>Table 2-1 shows the value ranges for the different types of signed integers. Specifying a variable
+as <code>signed</code> is redundant in most cases as the value will always be signed unless specified as
+<code>unsigned</code>. The one exception to this is <code>char</code>, which by default is unsigned in the range 0 to 255.</p>
+<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/signed_integer_types.png" /></p>
+<p style="text-align:center">
+Table 2-1: Signed Integer Types.
+</p>
+
+<h3>Zero Initialization</h3>
+<p>You can define a variable to be zero in one of the following two ways:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="n">counter</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>The second statement still initializes the variable <code>counter</code> to be 0.</p>
+<h3>Defining Variables with Fixed Values</h3>
+<p>To define constant values, that is values that cannot be changed throughout the program, we can use
+the <code>const</code> keyword:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">toe_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w">  </span><span class="c1">// An unsigned integer with fixed value 10</span>
+</code></pre></div>
+
+<p>The <code>const</code> keyword tells the compiler that this variable must not be modified. Thus, any attempt to
+modify it in the program will result in a compilation error.</p>
+<h2>Integer Literals</h2>
+<p>Constant values of any type, such as <code>42</code>, <code>2.71828</code>, <code>'Z'</code>, or <code>"Mark Twain"</code> are referred to as
+<em>literals</em>. Specifically they are integer literals, floating point literals, character literals, and
+string literals.</p>
+<p>Literals can be defined in some of the following ways:</p>
+<ul>
+<li><code>-123L</code>       - type <code>long</code></li>
+<li><code>+123</code>        - type <code>int</code></li>
+<li><code>123</code>         - type <code>int</code></li>
+<li><code>22333</code>       - type <code>int</code></li>
+<li><code>98U</code>         - type <code>unsigned int</code></li>
+<li><code>-1234LL</code>     - type <code>long long</code></li>
+<li><code>12345ULL</code>    - type <code>unsigned long long</code></li>
+</ul>
+<p>To make large numeric values readable, you can use the single quote character:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">distance</span><span class="w"> </span><span class="n">AU_METERS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">149&#39;597&#39;870&#39;700</span><span class="w"> </span><span class="c1">// Astronomical unit is 150 billion meters</span>
+</code></pre></div>
+
+<h3>Hexadecimal Literals</h3>
+<p>You can write integer literals as Hexadecimal values. A hexadecimal literal is prefixed with a <code>0x</code></p>
+<p>Here are some examples of hexadecimal literals with their decimal values:</p>
+<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/hexadecimal_literals.png" /></p>
+<p style="text-align:center">
+Table 2-2: Hexadecimal literal values.
+</p>
+
+<p>Each hexadecimal digit corresponds to 4 buts, so it's easy to express a pattern of bits as a
+hexadecimal literal. An RGB value of a pixel color is often expressed as three bytes packed into a
+32-bit word. The color white can be specified as <code>0xFFFFFF</code> because each intensity of each component
+have the same max value of <code>255</code> or <code>0xFF</code> in hexadecimal. Another example is the color red, which
+would be defined as <code>0xff0000</code>.</p>
+<h3>Octal Literals</h3>
+<p>You can also write literals as octal values -- that is, using base 8 instead of hexadecimal which
+uses base 16. An octal is prefixed by a leading 0.</p>
+<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/octal_literals.png" /></p>
+<p style="text-align:center">
+Table 2-3: Octal literal values.
+</p>
+
+<p>The octal value <code>0657</code> has the decimal literal <code>431</code>. To convert from octal to decimal, you would do
+the following computation:
+$$
+6\times8^2 + 5\times8^1 + 7\times8^0 = 6 \times 64 + 5 \times 8 + 7 \times 1 = 431
+$$</p>
+<h3>Binary Literals</h3>
+<p>Binary literals are prefixed by <code>0b</code> or <code>0B</code>. Here are some examples of binary literals:</p>
+<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/binary_literals.png" /></p>
+<p style="text-align:center">
+Table 2-4: Binary literal values.
+</p>
+
+<blockquote>
+<p>Note that like normal integers, you can also use single quotes to make reading binary values a
+bit easier. For example: <code>0b1100'1010</code>.</p>
+</blockquote>
+<h2>The <code>sizeof</code> Operator</h2>
+<p>You can use the <code>sizeof</code> operator to obtain the number of bytes occupied by a type, by a variable,
+or by the result of an expression. The code below shows three examples of using <code>sizeof</code> on a
+variable, a type, and the result of an operation.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="p">{</span><span class="mi">74</span><span class="p">};</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;The height variable occupies &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">sizeof</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; bytes.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Type </span><span class="se">\&quot;</span><span class="s">long long</span><span class="se">\&quot;</span><span class="s"> occupies &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; bytes.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;The result of the expression height * height/2 occupies &quot;</span><span class="w"></span>
+<span class="w">          </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">height</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">height</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; bytes.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Formatting Stream Output</h2>
+<p>We can manipulate how values are displayed to us when printing to stdout.</p>
+<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/stream_manipulators1.png" /></p>
+<p style="text-align:center">
+Table 2-5: manipulators in `iostream`.
+</p>
+
+<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/stream_manipulators2.png" /></p>
+<p style="text-align:center">
+Table 2-6: manipulators in `iomanip`.
+</p>
+
+<h2>Explicit Type Conversion</h2>
+<p>To explicitly convert a value of an expression to a given type, you can write the following
+<code>static_cast&lt;type_to_convert_to&gt;(expression)</code>. Below is a practical example:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="p">{</span><span class="mf">5.0</span><span class="p">};</span><span class="w"></span>
+<span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">z</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Old-Style Casts</h3>
+<p>In older versions of C++, explicit type casts were defined in the following manner:
+<code>(type_to_convert_to)expression</code></p>
+<p>And here is a practical example:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">inches</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">)(</span><span class="n">length</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">feet_per_yard</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">inches_per_foot</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">inches_per_foot</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h2>The <code>auto</code> Keyword</h2>
+<p>You can use the <code>auto</code> keyword to indicate that the compiler should deduce the type.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">auto</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w">        </span><span class="c1">// int</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">200UL</span><span class="p">;</span><span class="w">     </span><span class="c1">// unsigned long</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.14159</span><span class="p">;</span><span class="w">  </span><span class="c1">// double</span>
+</code></pre></div>
+
+<p><a href="chapter03.html">To Chapter 3</a></p>
+    </body>
+</html>
+
+

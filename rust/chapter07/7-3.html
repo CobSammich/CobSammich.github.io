@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>7-3</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 7 Index</a></p>
+<h1>Paths for Referring to an Item in the Module Tree</h1>
+<p>To show rust where to find something in a module tree, we use a path in the same way we would to
+navigate a filesystem.</p>
+<p>A path can be <em>absolute</em> or <em>relative</em>. An absolute path startes from a crate root by using a crate
+name. A relative path starts from the current module and uses <code>self</code>, <code>super</code>, or an identifier in
+the current module.</p>
+<p>Both absolute and relaitve path are followed by one or more identifiers separated by double colons
+(<code>::</code>).</p>
+<p>So, using the example from <a href="7-2.html">section 7.2</a>, we would call the <code>add_to_waitlist</code> function using
+one of the two following methods:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// private</span>
+<span class="w">    </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Absolute path</span>
+<span class="w">    </span><span class="k">crate</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// Relative path</span>
+<span class="w">    </span><span class="n">front_of_house</span>::<span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Exposing Paths with the <code>pub</code> Keyword</h2>
+<p>The code above won't actually compile however, because the <code>hosting</code> module defined in our crate is
+private. To declare it public, we must change the module definition to <code>pub mod hosting</code>. However,
+this still won't fix our compilation issue, because making a module public doesn't also translate to
+it's contents. In order to use the function <code>add_to_waitlist</code> outside of the <code>front_of_house</code>
+module, we must make that specific function public using the <code>pub</code> keyword.</p>
+<h2>Starting Relative Paths with <code>super</code></h2>
+<p>We can also use relative paths that begin with the parent module by using <code>super</code> at the start of
+the path. Consider the example below where we would like to access the method under the <code>serving</code>
+module:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">mod</span> <span class="nn">serving</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">serve_order</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">mod</span> <span class="nn">back_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">fn</span> <span class="nf">fix_incorrect_order</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">cook_order</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="k">super</span>::<span class="n">serving</span>::<span class="n">serve_order</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">fn</span> <span class="nf">cook_order</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>We can go up to the parent module (in this case, <code>front_of_house</code>) and then access the <code>serving</code>
+module and the function <code>serve_order</code> within it.</p>
+<h2>Making Structs and Enums Public</h2>
+<p>We can also make structs and enums public using <code>pub</code>. However, if we make a struct public, it's
+fields will still be private. We can give each field public functionality if we would like using the
+<code>pub</code> keyword.</p>
+<p>Below is an implementation of a breakfast meal where the customer can decide the kind of toast, thus
+making it public, but cannot pick the <code>seasonal_fruit</code> they would get.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">mod</span> <span class="nn">back_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Breakfast</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="n">toast</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">seasonal_fruit</span>: <span class="nb">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">impl</span><span class="w"> </span><span class="n">Breakfast</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">summer</span><span class="p">(</span><span class="n">toast</span>: <span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Breakfast</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">Breakfast</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="n">toast</span>: <span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="n">toast</span><span class="p">),</span><span class="w"></span>
+<span class="w">                </span><span class="n">seasonal_fruit</span>: <span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;peaches&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Order a breakfast in the summer with Rye toast</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">meal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">back_of_house</span>::<span class="n">Breakfast</span>::<span class="n">summer</span><span class="p">(</span><span class="s">&quot;Rye&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Change our mind about what bread we&#39;d like</span>
+<span class="w">    </span><span class="n">meal</span><span class="p">.</span><span class="n">toast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Wheat&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;I&#39;d like {} toast please&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">meal</span><span class="p">.</span><span class="n">toast</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// The next line won&#39;t compile if we uncomment it; we&#39;re not allowed</span>
+<span class="w">    </span><span class="c1">// to see or modify the seasonal fruit that comes with the meal</span>
+<span class="w">    </span><span class="c1">// meal.seasonal_fruit = String::from(&quot;blueberries&quot;);</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<blockquote>
+<p>Note that in the example above, we must implement the <code>summer</code> function for <code>Breakfast</code> because we
+cannot create an instance of <code>Breakfast</code> outside of the module as it has at least one private field.</p>
+</blockquote>
+<p>In contrast, we can make the struct itself public, which then makes all of it's fields public. An
+example of this is the <code>appetizer</code> struct below.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">mod</span> <span class="nn">back_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">enum</span> <span class="nc">Appetizer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Soup</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">Salad</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">order1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">back_of_house</span>::<span class="n">Appetizer</span>::<span class="n">Soup</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">order2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">back_of_house</span>::<span class="n">Appetizer</span>::<span class="n">Salad</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>Because the <code>Appetizer</code> struct is public, we can use it's fields in the outer function
+<code>eat_at_restaurant</code>.</p>
+<p>The next section we will go over the <code>use</code> keyword.</p>
+<p><a href="7-4.html">Next Section (7.4)</a></p>
+    </body>
+</html>
+
+

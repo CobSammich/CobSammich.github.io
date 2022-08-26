@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-08-21" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>index</title>
+        <link rel="stylesheet" href="../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../index.html">Return to Wiki Homepage</a></p>
+<h1>Linux Notes</h1>
+<h2>Systemctl</h2>
+<p>You can check the status of any systemd service with the following command. For example if we wanted
+to check if <code>sshd</code>, the OpenSSH server process, is running; one would type:</p>
+<div class="codehilite"><pre><span></span><code>systemctl status sshd
+</code></pre></div>
+
+<p>If we want to start a service (using <code>sshd</code> as an example again), we would type:</p>
+<div class="codehilite"><pre><span></span><code>systemctl start sshd
+</code></pre></div>
+
+<p>And to stop a system service:</p>
+<div class="codehilite"><pre><span></span><code>systemctl stop sshd
+</code></pre></div>
+
+<h2>Mounting Filesystem to Current System</h2>
+<p>Using <code>sshfs</code>, you can mount a filesystem to your linux machine. Editing files then will
+automatically be synced via ssh.</p>
+<div class="codehilite"><pre><span></span><code>sudo sshfs user@host:/path/to/dir /mnt/droplet -o auto_cache,reconnect,allow_other
+</code></pre></div>
+
+<p>To unmount the filesystem that was mounted, you would then type</p>
+<div class="codehilite"><pre><span></span><code>sudo umount /mnt/droplet
+</code></pre></div>
+
+<blockquote>
+<p>Note that you don't have to mount the whole remote filesystem. You can specify a certain directory
+to mount.</p>
+</blockquote>
+<h3>References</h3>
+<ul>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh">How to use sshfs to mount remote file systems over ssh</a></li>
+<li><a href="https://unix.stackexchange.com/questions/222944/mount-with-sshfs-and-write-file-permissions">Mount with sshfs and write file permissions</a></li>
+</ul>
+<h2>Finding Files</h2>
+<p>The <code>locate</code> command is incredibly useful for finding any file on your system. For example, for me
+to find where my Beginning C++17 textbook pdf is located on my computer, I would simply input the
+following:</p>
+<div class="codehilite"><pre><span></span><code>locate <span class="s2">&quot;Beginning C++&quot;</span>
+</code></pre></div>
+    </body>
+</html>
+
+

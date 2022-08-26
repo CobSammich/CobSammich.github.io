@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>7-2</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 7 Index</a></p>
+<h1>Defining Modules to Control Scope and Privacy</h1>
+<p>Modules let us organize code within a crate into groups. Modules control the privacy of items, which
+is whether an item can be used by outside code (public) or is an internal implementation not to be
+used outside of the package (private).</p>
+<p>Below is how a <em>library</em> crate might be structured to the functionality of a restaurant. The code
+attempts to mimic how a real restaurant might work. We structure our crate in the same way a
+restaurant has a "front" and "back" with different responsibilities.</p>
+<p>We can organize the crate and it's functions into nested modules. To make a library with cargo, I
+typed <code>cargo new --lib restaurant</code>. Then I added the following to <code>src/lib.rs</code></p>
+<div class="codehilite"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">fn</span> <span class="nf">seat_at_table</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">mod</span> <span class="nn">serving</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">fn</span> <span class="nf">take_order</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">fn</span> <span class="nf">serve_order</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">fn</span> <span class="nf">take_payment</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>We define the module using the <code>mod</code> keyword. Inside the <code>front_of_house</code> module, we created other
+modules for hosting and serving. Modules can also hold definitiions for other items, such as
+structs, enums, constants, traits, or functions.</p>
+<p>Below is what the module structure would look like:</p>
+<div class="codehilite"><pre><span></span><code>crate
+ └── front_of_house
+     ├── hosting
+     │   ├── add_to_waitlist
+     │   └── seat_at_table
+     └── serving
+         ├── take_order
+         ├── serve_order
+         └── take_payment
+</code></pre></div>
+
+<p><a href="7-3.html">Next Section (7.3)</a></p>
+    </body>
+</html>
+
+

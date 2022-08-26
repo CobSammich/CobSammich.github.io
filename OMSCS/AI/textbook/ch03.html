@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-08-24" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>ch03</title>
+        <link rel="stylesheet" href="../../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../index.html">Back to AI Homepage</a></p>
+<h1>Chapter 3 - Solving Problems by Searching</h1>
+<p>When an agent must consider a sequence of actions that form a path to a goal state, we call this
+agent a <strong>problem-solving agent</strong>, and the process it undertakes is called <strong>search</strong>.</p>
+<p>We will distinguish between two types of algorithms:</p>
+<ol>
+<li><strong>Informed</strong> - the agent can estimate how far it is from the goal</li>
+<li><strong>Uninformed</strong> - the agent <em>cannot</em> estimate how far it is from the goal</li>
+</ol>
+<h2>3.1 Problem-Solving Agents</h2>
+<p>In this chapter, we will assume our agents always have access to information about the world. With
+known information about the world, the agent can follow this four-phase problem solving process:</p>
+<ol>
+<li><strong>Goal Formulation</strong>: The final destination of the agent. Goals organize behavior by limiting the
+   objectives and hence the actions to be considered.</li>
+<li><strong>Problem Formulation</strong>: The agent creates a description of the states and the actions needed to
+   reach the goal.</li>
+<li><strong>Search</strong>: Before taking any action, the agent simulates sequences of actions in its model,
+   searching all set of sequences until it has found one that reaches the goal. This sequence is
+   called a <strong>solution</strong>.</li>
+<li><strong>Execution</strong>: The agent can now execute the actions in the solution, one at a time.</li>
+</ol>
+<p>A solution to any problem in a fully observable, deterministic, known environment is a <em>fixed
+sequence of actions</em>. Once the agent has found a solution sequence, it can execute the actions to
+get there without having perception of what is around it. This is known as an <strong>open-loop</strong> system.
+If the model is incorrect or the environment is non-deterministic, then the agent would be better
+off using a <strong>closed-loop</strong> approach that monitors its percepts.</p>
+<p>In non-deterministic environments, a solution would be a branching strategy that recommends
+different actions depending on perceptions in the environment. For example, if an agent traversing a
+road system were to arrive at a road with a "Road Closed" sign.</p>
+<h3>3.1.1 Search Problems and Solutions</h3>
+<p>Definition of a <strong>Search Problem</strong>:</p>
+<ul>
+<li>A set of possible states the environment can be initialized in.</li>
+<li>The <strong>initial state</strong> that the agent starts in.</li>
+<li>A set of one or more <strong>goal states</strong>. The state that must be achieved for the agent to reach its
+  goal.</li>
+<li>The <strong>actions</strong> available to the agent. Given a state $s$, the routine $Actions(s)$ returns a
+  finite set of actions that can be executed in $s$.
+$$
+Actions(s) = \set{a_1, a_2, a_3, \dots}
+$$</li>
+<li>A <strong>transition model</strong>, which describes what each action does. $Result(s, a)$ returns the new
+  state, $s'$, that results from doing action $a$ in state $s$.
+$$
+Result(s, a) = s'
+$$</li>
+<li>An <strong>action cost function</strong>, denoted by $c(s, a, s')$, gives the numeric cost of
+  applying action $a$ in state $s$ to reach state $s'$. The agent should use a cost function that it
+  cares about. For example, the cost function might measure the action length in miles or the time
+  it takes to complete the action.</li>
+</ul>
+<p>Some more vocab:</p>
+<ul>
+<li><strong>Path</strong>: A sequence of actions.</li>
+<li><strong>Solution</strong>: A path from the initial state to a goal state.</li>
+<li>Costs are additive; total cost of a path is the sum of each individual action costs.</li>
+<li><strong>Optimal Solution</strong>: lowest path cost among all solutions.</li>
+</ul>
+<p>The state space is represented as a
+<a href="https://en.wikipedia.org/wiki/Graph_(abstract_data_type)"><strong>graph</strong></a> in which the vertices are
+states and the directed edges between them are actions.</p>
+<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/romania_graph.png" /></p>
+<p style="text-align:center">
+Figure 1. A road map of Romania represented as a graph. The towns are nodes, while the roads and
+numbers associated are edges and their corresponding traversal costs.
+</p>
+
+<h3>3.1.2 Formulating Problems</h3>
+<p>Removing detail from a representation is called <strong>abstraction</strong>. Good problem formulation involves
+including the right level of detail. An abstraction is <em>valid</em> if it can be expanded/elaborated in
+the more detailed world. The choice of a good abstraction involves removing as much detail as
+possible while retaining validity and ensuring that the abstract actions are easy to carry out.</p>
+<h2>3.2 Example Problems</h2>
+<p>There are two types of problems:</p>
+<ul>
+<li><strong>Standardized Problem</strong>: Used to illustrate various problem solving methods. Used as a benchmark
+  for researchers to compare algorithm performance.</li>
+<li><strong>Real-World Problem</strong>: A solution people actually use, like a robot navigating an area.</li>
+</ul>
+<h3>3.2.1 Standardized Problems</h3>
+<p>A <strong>Grid World</strong> problem is a 2D rectangular array of square cells where agents can move from cell
+to cell. Cells typically move horizontally or vertically, but in some problems can move diagonally.
+Some cells contain objects that the agent can interact with - such as a wall it cannot pass or an
+item it can pick up.</p>
+<p>The book goes on to describe three different problems and how one would go about defining the
+States, initial state, actions, transition model, goal state, and action cost for all three
+problems. This is useful for understanding problem definition.</p>
+<p>One reference example, devised by Donald Knuth in 1964, says that starting with the number 4, a
+sequence of square root, floor, and factorial operations can reach any desired positive integer.
+Here is how the problem is defined:</p>
+<ul>
+<li><strong>States</strong>: Any positive real number.</li>
+<li><strong>Initial State</strong>: $4$.</li>
+<li><strong>Actions</strong>: Apply square root, floor, or factorial operation (factorial for integers only).</li>
+<li><strong>Transition Model</strong>: As given by the mathematical definitions of the operations.</li>
+<li><strong>Goal State</strong>: The desired positive integer.</li>
+<li><strong>Action Cost</strong>: Each action costs 1.</li>
+</ul>
+<p>The state space for this problem is clearly infinite.</p>
+<h3>3.2.2 Real-World Problems</h3>
+<p>Here are a list of several real-world problems:</p>
+<ul>
+<li><strong>Route-finding problem</strong>: Finding a possible route between two locations.</li>
+<li><strong>Touring Problems</strong>: Describe a set of locations that must be visited, rather than a single
+  destination. A famous problem is the <strong>Traveling salesperson problem</strong>, in which every city in the
+  graph must be visited. The aim is to find a tour with cost $\lt C$. This has been used with Boston
+  school buses to cut $5 million in expenses while reducing traffic and air pollution.</li>
+<li><strong>VLSI Layout</strong>: Circuit designs that minimize area, circuit delays, stray capacitances, while
+  maximizing yield.</li>
+</ul>
+<h2>3.3 Search Algorithms</h2>
+<p>A <strong>Search Algorithm</strong> takes a search problem as input and returns a solution or an indication of
+failure. This chapter will focus on <strong>search trees</strong> over the state-space graph, which forms paths
+from the initial state, trying to find a path that reaches a goal state. Each node in the search
+tree corresponds to a state in the state space and the edges in the search tree correspond to
+actions. The root of the tree corresponds to the initial state of the problem.</p>
+<p>Keep in mind the distinction between these two definitions:</p>
+<ul>
+<li><strong>State Space</strong>: The set of states in the world and the actions that allow transitions from one
+  state to another.</li>
+<li><strong>Search Tree</strong>: The path between these states that ultimately reach the goal.</li>
+</ul>
+<p>We can <strong>expand</strong> any node in the search tree by considering the available $Actions$ for that state,
+using the $Result$ function to generate the corresponding new node from that action. These are known
+as <strong>child nodes</strong>. Any node that has not yet been expanded is known as the <strong>frontier</strong> in both the
+state space and search tree. Figure 2 shows the example of the first few actions performed on the
+graph in Figure 1. Lavender nodes are nodes that have been expanded and teal nodes are nodes that
+represent the frontier.</p>
+<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/search_tree1.png" /></p>
+<p style="text-align:center">
+Figure 2. A partial search tree for finding a route from Arad to Bucharest in the graph shown in
+figure 1. This shows how the tree looks after we perform the first few actions. The lavender nodes
+are nodes that have been *expanded*, while the teal nodes are ones that represent the *frontier*.
+Unexplored nodes are represented by dashed lines.
+</p>
+
+<p>In general, we will have an initial node. That node will have path leading to other nodes. Those
+other nodes adjacent to the initial node are in the <strong>frontier</strong>. When we expand a node in the
+frontier, it is considered explored. To avoid exploring the same node more than once, we can keep
+track of the <em>sets</em> of nodes that are expanded (reached), in the frontier, and unexplored.</p>
+<h3>3.3.1 Best-First Search</h3>
+<p>The different search algorithms aim to answer: how do we decide which node from the frontier to
+expand next? A basic approach is known as <strong>best-first search</strong>.</p>
+<p>In Best-first search, we choose a node, $n$, with minimum value of some evaluation function, $f(n)$.</p>
+<p>At each iteration of the best-first search algorithm, we perform the following steps:</p>
+<ul>
+<li>If there are no nodes on the frontier, return failure.</li>
+<li>Choose a node on the frontier with minimum $f(n)$ value.</li>
+<li>If the that chosen node is a goal state, return it.</li>
+<li>Otherwise, iterate over all child nodes of the current node and $Expand$ them.</li>
+<li>Each child is added to the frontier if it has not been reached before or is re-added to the
+  frontier if it is being reached with a path that has a lower path cost than any previous path.</li>
+</ul>
+<p>Here is pseudocode for the best-first search algorithm:</p>
+<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/best-first-search_pseudocode.png" /></p>
+<p style="text-align:center">
+Figure 3. The best-first search algorithm and the function for expanding a node.
+</p>
+
+<h3>3.3.2 Search Data Structures</h3>
+<p>The data structures that help keep track of the search tree are as follows.</p>
+<p>A <strong>node</strong> in the tree is represented by a data structure with four components:</p>
+<ul>
+<li><code>node.State</code>: The state to which the node corresponds.</li>
+<li><code>node.Parent</code>: The node in the tree that generated this node.</li>
+<li><code>node.Action</code>: The action that was applied to the parent's state to generate this node.</li>
+<li><code>node.Path_Cost</code>: The total cost of the path from the initial state to this node. In mathematical
+  formulas, the book uses $g(node)$ as a synonym for Path-Cost.</li>
+</ul>
+<p>Following the node.Parent pointers back from a node shows us the states and actions along the path
+from the initial node to this node. Doing this from a goal node gives us the solution.</p>
+<p>The <strong>frontier</strong> is stored as a queue of some kind, because we need to be able to call the following
+functions on it:</p>
+<ul>
+<li><code>is_empty(frontier)</code> - returns true only if there are no nodes in the frontier.</li>
+<li><code>pop(frontier)</code> - removes the top node from the frontier and returns it.</li>
+<li><code>top(frontier)</code> - returns (but does not remove) the top node of the frontier.</li>
+<li><code>add(node, frontier)</code> - inserts node into its proper place into the queue.</li>
+</ul>
+<p>Three kinds of queues are used in search algorithms:</p>
+<ul>
+<li><strong>Priority queue</strong> - first pops the node with the minimum cost according to some evaluation
+  function, $f$. It is used in best-first search.</li>
+<li><strong>FIFO queue</strong> - first pops the node that was added to the queue first. It is used in
+  breadth-first search.</li>
+<li><strong>LIFO queue</strong> - (also known as a <strong>stack</strong>) first pops the most recently added node. It is used
+  in depth-first search.</li>
+</ul>
+<p>The reached states can be stored as a lookup table (hash-map) where each key is a state and each
+value is the node for that state.</p>
+<h3>3.3.3 Redundant Paths</h3>
+<p>To avoid traversing through redundant paths, for example moving from Arad to Sibiu then back to Arad
+in Figure 1, we can keep track of all the previously reached states (like best-first search does).
+This allows us to detect all redundant paths and keep the lowest cost one in memory. In the book,
+they refer to this as the lookup table, $reached$.</p>
+<p>If we remove all references to $reached$ we get a tree-like search that uses less memory, but will
+examine redundant paths to the same state, effectively running slower.</p>
+<h3>3.3.4 Measuring Problem-Solving Performance</h3>
+<p>There are four ways to evaluate an algorithm's performance:</p>
+<ol>
+<li><strong>Completeness</strong>: Is the algorithm guaranteed to find a solution when there is one, and to
+   correctly report failure when there is not?</li>
+<li><strong>Cost optimality</strong>: Does it find a solution with the lowest path cost of all solutions?
+   Basically is it fully optimized?</li>
+<li><strong>Time complexity</strong>: How long does it take to find a solution? This can be measured in seconds,
+   or more abstractly by the number of states and actions considered.</li>
+<li><strong>Space complexity</strong>: How much memory is needed to perform the search?</li>
+</ol>
+<p>For a search algorithm to be complete, it must be <strong>systematic</strong> in the way it explores an infinite
+state space, making sure it can eventually reach any state that is connected to the initial state.</p>
+<p>You can consider time and space complexity with respect to some measure of the problem difficulty.
+In theoretical computer science, the typical measure is the size of the state-space graph,
+$\left| V \right| + \left| E \right|$, where</p>
+<ul>
+<li>$\left| V \right|$ is the number of vertices (state nodes) of the graph.</li>
+<li>$\left| E \right|$ is the edges (distinct state/action pairs).</li>
+</ul>
+<p>Representing the complexity as $\left| V \right| + \left| E \right|$ is appropriate when the graph
+is an explicit data structure, such as the map of Romania in Figure 1. However, in many AI problems,
+the graph is represented only <em>implicitly</em> by the initial state, actions and transition model. For
+an implicit  state space, complexity can be measured in terms of</p>
+<ul>
+<li>$d$: the <strong>depth</strong> or number of actions in an optimal solution.</li>
+<li>$m$: The maximum number of actions in any path.</li>
+<li>$b$: the <strong>branching factor</strong> or number of successors of a node that need to be considered.</li>
+</ul>
+<h2>3.4 Uninformed Search Strategies</h2>
+<p>An uninformed search algorithm isn't aware of how close a state is to the goal(s). For example, in
+Figure 1, an agent with no knowledge of Romanian geography has no idea which city is a closest first
+step from Arad to Bucharest: Zerind or Sibiu. In contrast, an informed agent would know the location
+of each city and thus know that Sibiu is closer to Bucharest than Zerind and thus knows to make the
+first move towards Sibiu.</p>
+<h3>3.4.1 Breadth-First Search</h3>
+<p>When all actions have the same cost, an appropriate search algorithm is breadth-first search, in
+which the root node is expanded first, then all the successors of the root node are expanded next,
+then <em>their</em> successors, and so on. This is a <strong>systematic</strong> search algorithm that is therefore
+complete even on infinite state spaces. We can easily modify <code>Best-First-Search</code> to implement
+breadth-first search by making the evaluation function $f(n)$ the depth of the node.</p>
+<p>We can achieve some additional efficiency with a few tricks:</p>
+<ul>
+<li>A FIFO queue will be faster than a priority queue, and will give us the correct order of nodes.
+  New nodes go to the back of the queue and old nodes, which should be shallower than new nodes, get
+  expanded first.</li>
+<li>$reached$ can be a set of states rather than a mapping from states to nodes, because once a state
+  is reached, we will never find a better path to that state due to the order in which we we are
+  expanding nodes.</li>
+</ul>
+<p>Due to the 2nd bullet above, we can do an <strong>early goal test</strong>, which checks whether a node is a
+solution as soon as it is generated, rather than a <strong>late goal test</strong> that best-first search uses,
+waiting until a node is popped off the frontier queue.</p>
+<p>Breadth-First search will always find a solution with a minimal number of actions due to how the
+nodes are generated. When generating (expanding) nodes at depth $d$, all the nodes at depth $d - 1$
+cannot be solutions, otherwise we would have already returned from the algorithm. This means that
+breadth-first search is <strong>cost-optimal</strong> for problems where all actions have the same cost, but not
+for problems that don't have this same property. It is complete in either case.</p>
+<p><strong>Time complexity</strong>: The root expands $b$ nodes, each of which expands $b$ more nodes for a total of
+$b^2$ at the second level. Then for depth $d$, the time complexity would be $O(b^d)$.</p>
+<p><strong>Space complexity</strong>: All nodes remain in memory, so we have space complexity of $O(b^d)$.</p>
+<p>The book gives a good example here to show that memory requirements are a bigger problem for
+breadth-first search problems than execution time. For problem with branching factor $b=10$ and a system
+with processing speed of 1 million nodes/second and memory requirements of 1 Kbyte/node. A problem
+with and a search at depth $d=10$ would take ~3 hours, but would require 10 terabytes of memory.</p>
+<blockquote>
+<p>Exponential complexity search problems cannot be solved by uninformed search for any but the
+smallest instances.</p>
+</blockquote>
+<p>Here is pseudocode that implements the breadth-first search algorithm:</p>
+<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/breadth-first-search.png" /></p>
+<p style="text-align:center">
+Figure 4. The breadth-first search algorithm.
+</p>
+
+<h3>3.4.2 Dijkstra's Algorithm or Uniform-Cost Search</h3>
+<p>When actions have different costs, it is best to use best-first search where the evaluation function
+is the cost of the path from the root to the current node. This is known as Dijkstra's algorithm,
+<strong>uniform-cost search</strong>, and, in the lectures, <strong>Cheapest-first search</strong>. The algorithm can be
+implemented in a call to <code>Best-First-Search</code> with <code>Path_Cost</code> as the evaluation function, $f$ like
+so:</p>
+<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/uniform-cost-search.png" /></p>
+<p style="text-align:center">
+Figure 5. The uniform-cost search algorithm.
+</p>
+
+<p>The time and space complexity of uniform-cost search is defined by the following terms:</p>
+<ul>
+<li>$C^✳$: the cost of the optimal solution.</li>
+<li>$\epsilon$: a lower bound on the cost of each action, with the constraint $\epsilon \gt 0$.</li>
+</ul>
+<p>Then this algorithm's worst base time complexity is $O\left( b^{1 + \lfloor C^✳ / \epsilon \rfloor} \right)$</p>
+<p>The worst case can be much greater than $b^d$ in breadth-first search. This is because uniform-cost
+search can explore large trees of actions with low costs before exploring high-cost trees with
+useful action. When all action costs are equal, $b^{1 + \lfloor C^✳ / \epsilon \rfloor}$ is just
+$b^{d + 1}$</p>
+<p>Because this algorithm is explicitly looking for the lowest cost path at all times, we know this
+algorithm is cost-optimal and complete. It also uses a late goal test because it needs to wait for
+the goal to be popped off the frontier queue. It is complete because it will never travel down an
+infinite path (in the case where all action costs are $\gt \epsilon \gt 0$).</p>
+<h3>3.4.3 Depth-First Search and the Problem of Memory</h3>
+<p>The <strong>Depth-first search</strong> algorithm expands the <em>deepest</em> node in the frontier first. It can be
+implemented as a call to <code>Best-First-Search</code> where the evaluation function $f$ is the negative of
+the depth. This algorithm does not keep track of reached states, because it will always iterate down
+the deepest part of the tree recursively until it finds a solution - always returning the first
+solution it finds.</p>
+<p>In finite spaces, Depth-first search is complete, but for infinite spaces it is incomplete as it
+will infinitely traverse down the first infinite path. It can also get stuck in an infinite loop in
+cyclic spaces -- that is spaces that contain a loop.</p>
+<p>The reason for using Depth-first search is because it has much smaller memory requirements. We don't
+store a $reached$ table in memory, and the frontier is always very small.</p>
+<p>The memory complexity is that of $O(bm)$, where $b$ is the branching factor and $m$ is the maximum
+depth of the tree. The time complexity is then $O(b^m)$</p>
+<p>There is a variant of depth-first search called <strong>backtracking search</strong> which uses even less memory.
+In backtracking search, only one child/successor node is generated at a time rather than all
+children/successors. This approach <em>modifies</em> the current state rather than allocating memory for a
+branch-new state. This effectively reduces the memory requirements to $O(m)$.</p>
+<h3>3.4.4 Depth-limited and Iterative Deepening Search</h3>
+<p>There is an adaption of depth-first search known as <strong>Depth-limited search</strong> that stops it from
+endlessly wandering down an infinite path. In this adaption, we supply a depth limit, $l$, in which
+we don't expand the nodes at depth $l$. The algorithm is incomplete because if we choose $l$ that is
+too small, then we will never find the goal. This search algorithm also can long prevent cycles with
+it's depth limit.</p>
+<p>The time complexity and space complexity are the same as depth-first search where $\ell$ replaces
+$m$. Space complexity is $O(b\ell)$. Time complexity is $O(b^\ell)$</p>
+<p>Knowing the <strong>diameter</strong> of a problem - the max number of actions from any initial state to any
+other state - can help us make a smart decision about what to pick for $\ell$. However, most
+problems we don't know a good depth limit until we have solved the problem.</p>
+<p><strong>Iterative Deepening Search</strong> tries to pick a good value for $\ell$ by <em>iteratively</em> trying
+increasing values for $ell$: First $0$, then $1$, then $2$, etc until a solution is found or returns
+the <em>failure</em> value.</p>
+<p>The memory complexity is $O(bd)$ when there is a solution, or $O(bm)$ when there is no solution in a
+finite space. $d$ is the depth of the solution, $b$ is the branching factor, and $m$ is the max
+depth of the tree.</p>
+<p>Iterative deepening is optimal for problems where all actions have the same cost - like
+breadth-first-search. It is also complete unlike its two counterparts (Depth-First and
+Depth-Limited) because it iterates down the tree checking all depths.</p>
+<p>Time complexity is $O(b^d)$ when there is a solution and $O(b^m)$ when there isn't one. This
+algorithm is very similar to breadth-first search, but the difference is that iterative deepening
+does not store the nodes in memory and repeats the previous levels, therefore saving memory at the
+cost of time.</p>
+<p>Here is</p>
+<blockquote>
+<p>In general iterative deepening is the preferred uninformed search method when the search state
+space is larger than can fit in memory and the depth of the solution is not known.</p>
+</blockquote>
+<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/iterative-deepening-search_pseudocode.png" /></p>
+<p style="text-align:center">
+Figure 6. Pseudocode for iterative deepening search.
+</p>
+
+<h3>3.4.5 Bidirectional Search</h3>
+<p>Bidirectional state simultaneously searches forward from the initial state and backward from the
+goal state(s) with the goal of having both searches meet. The idea here is that $b^{d/2} + b^{d/2}$
+is much faster than $b^d$</p>
+<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/bidirectional-search_pseudocode.png" /></p>
+<p style="text-align:center">
+Figure 7. Pseudocode for Best-First Bidirectional Search.
+</p>
+
+<p>For this solution, you need two frontiers and two tables of reached states. A solution is found when
+two frontiers collide.</p>
+<p>The pseudocode above implements bidirectional best-first search, where we decide which node to
+explore next by the evaluation functions given for both forward and backward search. When we use the
+path cost as the evaluation function, we have implemented bidirectional uniform-cost search. For
+bidirectional uniform-cost search, the cost of the optimal path is $C^✳$, thus we will never expand
+any node $\gt \frac{C^✳}{2}$, which can speed search up considerably.</p>
+<h3>3.4.6 Comparing Uninformed Search Algorithms</h3>
+<p>The table below compares the uninformed search algorithms we learned in this section in terms of
+Completeness, optimality, time and space complexities.</p>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Breadth-First</th>
+<th>Uniform-Cost</th>
+<th>Depth-First</th>
+<th>Depth-Limited</th>
+<th>Iterative Deepening</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Complete?</td>
+<td>Yes (if $b$ is finite)</td>
+<td>Yes (if $b$ is finite)</td>
+<td>No</td>
+<td>Yes if $\ell \gt d$</td>
+<td>Yes (if $b$ is finite)</td>
+</tr>
+<tr>
+<td>Optimal Cost?</td>
+<td>Yes (if all action costs are equal)</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes (if all action costs are equal)</td>
+</tr>
+<tr>
+<td>Time Complexity</td>
+<td>$O(b^d)$</td>
+<td>$O(b^{1 + \lfloor C^✳ / \epsilon \rfloor})$</td>
+<td>$O(b^m)$</td>
+<td>$O(b^\ell)$</td>
+<td>$O(b^d)$</td>
+</tr>
+<tr>
+<td>Space Complexity</td>
+<td>$O(b^d)$</td>
+<td>$O(b^{1 + \lfloor C^✳ / \epsilon \rfloor})$</td>
+<td>$O(bm)$</td>
+<td>$O(b\ell)$</td>
+<td>$O(bd)$</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center">
+Table 1. Evaluation of search algorithms. Where $b$ is the branching factor, $m$ is the max depth of
+the search tree, $d$ is the depth of the shallowest solution.
+</p>
+
+<h2>3.5 Informed (Heuristic) Search Strategies</h2>
+<h2>Vocab</h2>
+<ul>
+<li><strong>Branching Factor</strong> - the number of successors/children of a node that need to be considered.</li>
+<li><strong>Complete</strong> - It's guaranteed to find a solution.</li>
+<li><strong>Cost-Optimal</strong> - Guaranteed to find the solution that requires the lowest cost.</li>
+<li><strong>Diameter</strong> - Represents the max number of actions needed to get from any initial state to any
+  other state in the space.</li>
+</ul>
+    </body>
+</html>
+
+

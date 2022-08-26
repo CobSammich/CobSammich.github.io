@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-05-12" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>chapter06</title>
+        <link rel="stylesheet" href="../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="cpp-index.html">Back to C++ Index</a></p>
+<h1>Chapter 6 Notes - Pointers and References</h1>
+<h2>What is a Pointer</h2>
+<p>A <em>pointer</em> is a variable that can store a memory address of another variable. A pointer gets its
+name as it "points to" a location in memory where some other value is stored.</p>
+<p>A pointer is essentially useless unless you also know the data type it points to. Knowing how many
+bytes the pointer stores, allows us to decode the binary at that address into a meaningful value.</p>
+<p>To declare a pointer of type long for example, you would place an asterisk after the type
+declaration like so:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">long</span><span class="o">*</span><span class="w"> </span><span class="n">pnumber</span><span class="p">;</span><span class="w">          </span><span class="c1">// a pointer to type long</span>
+</code></pre></div>
+
+<p>The variable <code>pnumber</code> stores a type <code>long</code>, and will not compile if we try to store the address of
+a variable that is not type <code>long</code>. Because the above code does not initialize <code>pnumber</code> to
+anything, it points to a special address equivalent to zero. This special pointer value is written
+as <code>nullptr</code>, which you can explicitly assign to pnumber like this:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">long</span><span class="o">*</span><span class="w"> </span><span class="n">pnumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>According to the book, it is "reckless" to define an uninitialized pointer as it can be dangerous.
+They recommend always initializing a pointer to <code>nullptr</code> if you do not have a memory address to
+assign it yet.</p>
+<p>No matter the type or size in bytes of the data a pointer refers to, though, the size of the pointer
+variable itself will always be the same. The size of a pointer is dependent on the system. On most
+computers today, a pointer will be either 4 or 8 bytes for a 32 and 64 bit computer architecture,
+respectively.</p>
+<h2>The Address-Of Operator</h2>
+<p>The <em>address-of</em> operator, <code>&amp;</code>, obtains the address of a variable. You could define a pointer to a
+variable <code>number</code> using the following two statements.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">long</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">12345L</span><span class="p">;</span><span class="w"></span>
+<span class="kt">long</span><span class="o">*</span><span class="w"> </span><span class="n">pnumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">number</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p><code>pnumber</code> now stores the address of <code>number</code>. <code>pnumber</code> can also store the address of any variable
+of type <code>long</code>, so you can write the following two statements to change what address it points to.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">long</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1454L</span><span class="p">;</span><span class="w"></span>
+<span class="n">pnumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">height</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h2>The Indirection Operator</h2>
+<p>The <code>indirection operator</code>, <em>, to a pointer accesses the contents of the memory location to which it
+points. The indirection operator is often called the </em>dereference operator<em> as well, and the process
+of accessing the data in the memory location pointed to by a pointer is termed </em>dereferencing* the
+pointer. To access the data stored at the address pointed to by pnumber, you would use the
+expression <code>*pnumber</code>.</p>
+<h2>Pointers to Type <code>char</code></h2>
+<p>A variable of type "pointer to <code>char</code>" has the ability to be initialized with a string literal. Fore
+example, you can declare and initialize such a pointer with the following statement:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">pproverb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;A miss is as good as a mile.&quot;</span><span class="p">;</span><span class="w">    </span><span class="c1">// don&#39;t do this!</span>
+</code></pre></div>
+
+<p>This actually creates an array of elements of type <code>const char</code> because it is a C-style <code>char</code> array
+meaning you're not supposed to change it. If you try to change any value in the char array, some
+compilers will throw a warning that you're trying to make a conversion from type <code>const char*</code> to
+type <code>char*</code>. To avoid this, it's best to define the array as const:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">pproverb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;A miss is as good as a mile.&quot;</span><span class="p">;</span><span class="w">    </span><span class="c1">// don&#39;t do this!</span>
+</code></pre></div>
+
+<h3>Space Efficiency of type <code>char*</code></h3>
+<p>Comparing this with an example of storing chars in arrays from chapter 5, we notice that declaring
+<code>char*</code> is actually more space efficient as we only store the necesarry number of chars. As opposed
+to defining a char array of fixed size, where we store null characters for the unused spots in
+memory.</p>
+<h3>Arrays of Pointers</h3>
+<p>Example 6-3 in the book shows how one would explicitly define several pointers to char arrays.
+Example 6-4 shows a better way of defining these by creating an array of <code>const char*</code>'s. Here is the code
+to accomplish this:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">pstars</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                     </span><span class="s">&quot;Fatty Arbuckle&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Clara Bow&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                     </span><span class="s">&quot;Lassie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Slim Pickens&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                     </span><span class="s">&quot;Boris Karloff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Mae West&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                     </span><span class="s">&quot;Oliver Hardy&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Greta Garbo&quot;</span><span class="w"></span>
+<span class="w">                   </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>The figure below shows graphically how these <code>char*</code>'s are stored.</p>
+<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch06/images/array_of_pointers.png" /></p>
+<h2>Constant Pointers and Pointers to Constants</h2>
+<p>We've already learned that because these strings are of type <code>const char*</code> that we cannot modify the
+contents of them like so:</p>
+<div class="codehilite"><pre><span></span><code><span class="o">*</span><span class="n">pstars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;X&#39;</span><span class="p">;</span><span class="w">       </span><span class="c1">// will not compile</span>
+</code></pre></div>
+
+<p>However, because the pointers themselves are not constant, we can re-assign one of the pointer to a
+different address in memory:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pstars</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pstars</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w"></span>
+</code></pre></div>
+
+<p>To explicitly define the pointers to be const and therefore unable to be changed, we can add another
+<code>const</code> keyword to the declaration of <code>pstars</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">pstars</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                     </span><span class="s">&quot;Fatty Arbuckle&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Clara Bow&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                     </span><span class="s">&quot;Lassie&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Slim Pickens&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                     </span><span class="s">&quot;Boris Karloff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Mae West&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                     </span><span class="s">&quot;Oliver Hardy&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Greta Garbo&quot;</span><span class="w"></span>
+<span class="w">                   </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Pointers and Arrays</h2>
+<p>You can create an array of type <code>double</code> and create a pointer to that array:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span><span class="w"></span>
+<span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">pvalue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">values</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>Although an array name represents an addres, it is not a pointer. You can modify the address stored
+in a pointer, whereas the address that an array name represents is fixed.</p>
+<h3>Pointer Arithmetic</h3>
+<p>You can modify pointer addresses using addition or subtraction. You can also compare pointers to
+produce a logical result. You can add or subtract an integer from an address to obtain another
+address. You can subtract a pointer from another pointer to produce an integer (how many addresses
+away they are from eachother).</p>
+<p>Incrementing a pointer in the following way increments the pointer so that it points to the next
+element in the array. For example, if <code>pvalue</code> is "pointer to <code>double</code>" and type <code>double</code> is 8
+bytes, then the address is <code>pvalue</code> will be incremented by 8.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pvalue</span><span class="o">++</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>In general, the expression <code>pvalue + n</code>, where n can be any expression resulting in an integer, will
+add <code>n * sizeof(double)</code> to the address in <code>pvalue</code> because <code>pvalue</code> is of type "pointer to
+<code>double</code>".</p>
+<h3>The Difference Between Pointers</h3>
+<p>You can subtract two pointers to long doing the following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">long</span><span class="w"> </span><span class="o">*</span><span class="n">pnum1</span><span class="w"> </span><span class="p">{</span><span class="o">&amp;</span><span class="n">numbers</span><span class="p">[</span><span class="mi">6</span><span class="p">]};</span><span class="w">             </span><span class="c1">// Points to 7th array element</span>
+<span class="kt">long</span><span class="w"> </span><span class="o">*</span><span class="n">pnum2</span><span class="w"> </span><span class="p">{</span><span class="o">&amp;</span><span class="n">numbers</span><span class="p">[</span><span class="mi">1</span><span class="p">]};</span><span class="w">             </span><span class="c1">// Points to 2nd array element</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">difference</span><span class="w"> </span><span class="p">{</span><span class="n">pnum1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pnum2</span><span class="p">};</span><span class="w">        </span><span class="c1">// Result is 5</span>
+</code></pre></div>
+
+<p>One might think the value <code>difference</code> is an integer of value $5$, because they are 5 positions
+apart. However, because a pointer can be either 4 or 8 bytes dependent on the host platform, there
+is a special type to denote a difference between two pointers: <code>std::ptrdiff_t</code>. So, the above
+subtraction and assignment would be:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="kt">ptrdiff_t</span><span class="w"> </span><span class="n">difference</span><span class="w"> </span><span class="p">{</span><span class="n">pnum1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pnum2</span><span class="p">};</span><span class="w">        </span><span class="c1">// Result is 5</span>
+</code></pre></div>
+
+<h3>Comparing Pointers</h3>
+<p>You can compare pointers of the same type using the typical comparison operators. Expressions such
+as <code>pnum2 &lt; pnum1</code> will check if the <code>pnum2</code> points to an earlier position in memory.</p>
+<h3>Using Pointer Notation with an Array Name</h3>
+<p>Suppose we can an array of type long:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">long</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="p">{}</span><span class="o">:</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can refer to the element <code>data[3]</code> using pointer notation as <code>*(data + 3)</code>. As <code>*data</code> refers to
+the address of the beginning of the array, any arithmetic operation will increment it by that value.</p>
+<h2>Dynamic Memory Allocation</h2>
+<p>Up to this point we have only used code that allocates space for data at compile time, excluding the
+<code>std::vector</code>, which dynamically allocates and and any memory it needs to holds its elements.</p>
+<p>We store variables that we define on the stack, which has a fixed size. At the end of a scope block
+in which a variable is defined, the memory allocated for the variable on the stack is released and
+is thus free to be reused.</p>
+<p>Memory that is not occupied by the operating system or other programs on the computer is called the
+<em>heap</em> (The book commonly refers to the heap as the "free store" -- I will use them interchangeably
+in these notes). You can request space to be allocated within the heap at runtime for a new variable
+of any type using the <code>new</code> operator, which also returns the address of the space allocated. To
+release memory on the heap, you use the <code>delete</code> operator.</p>
+<h3>Using the <code>new</code> and <code>delete</code> Operators</h3>
+<p>Here is an example of creating space for a variable of type <code>double</code> and then defining a pointer to
+point to that memory:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">pvalue</span><span class="w"> </span><span class="p">{};</span><span class="w">                     </span><span class="c1">// Pointer initialized with nullptr</span>
+<span class="n">pvalue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="p">;</span><span class="w">                   </span><span class="c1">// Request memory for a double variable</span>
+</code></pre></div>
+
+<p>The <code>new</code> operator on the second line returns the address of the memory on the heap allocated to a
+<code>double</code> variable. We can then use the "indirection" or dereference operator to assign a value to
+the pointer:</p>
+<div class="codehilite"><pre><span></span><code><span class="o">*</span><span class="n">pvalue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.14</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>There is a circumstance where we may not be able to allocate the requested memory, if for example
+there is no area of the heap large enough to accommodate the space requested. When this happened,
+the <code>new</code> operator throws an <code>exception</code>, which will end the program.</p>
+<p>You can accomplish the previous three lines of code in one line using the following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">pvalue</span><span class="w"> </span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="p">{</span><span class="mf">3.14</span><span class="p">}};</span><span class="w"> </span><span class="c1">// pointer initialized with an address in the heap</span>
+</code></pre></div>
+
+<p>When dynamically allocated memory is no longer needed, we can free it using the <code>delete</code> operator:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">delete</span><span class="w"> </span><span class="n">pvalue</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>When you delete dynamically allocated memory, the pointer that points to that memory address
+<strong>still</strong> points to that memory address. This can be "a recipe for disaster", so it is always good
+practice to reset a pointer to point to the <code>nullptr</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">delete</span><span class="w"> </span><span class="n">pvalue</span><span class="p">;</span><span class="w">                        </span><span class="c1">// Release memory pointed to by pvalue</span>
+<span class="n">pvalue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w">                     </span><span class="c1">// Reset the pointer</span>
+</code></pre></div>
+
+<h3>Dynamic Allocation of Arrays</h3>
+<p>You can allocate memory for an array using the following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span><span class="w">     </span><span class="c1">// allocate 100 double values</span>
+</code></pre></div>
+
+<p>You can allocate memory with initialized values using the following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span><span class="w"> </span><span class="p">{}};</span><span class="w">         </span><span class="c1">// All 100 values are initialized to 0.0</span>
+<span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">one_two_three</span><span class="w"> </span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">}};</span><span class="w"> </span><span class="c1">// 3 integers with a given initial value</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">fdata</span><span class="p">{</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">float</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mf">.1f</span><span class="p">,</span><span class="w"> </span><span class="mf">.2f</span><span class="w"> </span><span class="p">}};</span><span class="w"> </span><span class="c1">// All but the first 2 floats are initialized to 0.0f</span>
+</code></pre></div>
+
+<p>To remove the array from the heap, you would use the <code>delete</code> operator with square brackets. And of
+course it's always good practice to then reset the pointer.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">delete</span><span class="p">[]</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w">      </span><span class="c1">// release array pointed to by data</span>
+<span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="w">      </span><span class="c1">// reset the pointer</span>
+</code></pre></div>
+
+<h2>Multidimensional Arrays</h2>
+<p>In chapter 5, we learned how to make two dimensional arrays using the <code>[][]</code> syntax. Although we
+also learned that we can only dynamically create the first dimension, while all others in the array
+must be fixed.</p>
+<p>To create fully dynamic multidimensional arrays, we can do the following:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="o">**</span><span class="w"> </span><span class="n">carrots</span><span class="p">{</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="p">[</span><span class="n">rows</span><span class="p">]</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="n">carrots</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+</code></pre></div>
+
+<p>And to delete them:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">   </span><span class="k">delete</span><span class="p">[]</span><span class="w"> </span><span class="n">carrots</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"></span>
+<span class="k">delete</span><span class="p">[]</span><span class="w"> </span><span class="n">carrots</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>Note that many mature programs represent multidimensional arrays as single dimensional arrays such
+that the array is the size <code>columns * rows</code> (repeat for however many dimensions). This is done
+because we can gaurantee that a one dimensional array is contiguous in memory, whereas an array of
+many one dimensional arrays cannot be gauranteed to be contiguous.</p>
+<h2>Member Selection Through a Pointer</h2>
+<p>We know that we can create a vector either on the stack or on the heap using the two different
+statements:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">pdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{};</span><span class="w">      </span><span class="c1">// heap</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w">                      </span><span class="c1">// stack</span>
+<span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">pdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">data</span><span class="p">;</span><span class="w">                        </span><span class="c1">// point to the vector on the stack (similar to the heap)</span>
+</code></pre></div>
+
+<p>To add an item to one of these vector pointers, you would need to dereference the pointer to obtain
+the vector itself like so:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">(</span><span class="o">*</span><span class="n">pdata</span><span class="p">).</span><span class="n">push_back</span><span class="p">(</span><span class="mi">66</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>Writing the parens around the dereference of <code>pdata</code> can be tedious and easily forgotten. An easier
+way to write this is to use the <code>-&gt;</code> operator, which combines the dereferencing of a pointer to an
+object and the selection of a member of the object (<code>.</code>):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pdata</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">66</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Hazards of Dynamic Memory Allocation</h2>
+<h3>Dangling pointer</h3>
+<p>Dangling pointers were addressed earlier in this section. Basically when an array is freed from the
+heap, the pointer also needs to be reset. A common way of dealing with this as discussed before is
+to set the pointer to <code>nullptr</code>.</p>
+<h3>Allocation/Deallocation Mismatch</h3>
+<p>Make sure every <code>new</code> is paired with a <code>delete</code> and every <code>new[]</code> is paired with a <code>delete[]</code>.</p>
+<h3>Memory Leaks</h3>
+<p>Memory leaks occur when you allocate memory to the heap using <code>new</code> or <code>new[]</code> and fail to release
+it. If you lose or overwrite the address of a pointer, there is a memory leak as that memory from
+the original pointer was never freed. If a pointer fails to be freed in the scope it's defined in,
+then it's no longer possible to delete that memory outside the scope.</p>
+<p>Best practice is to add the <code>new</code> and <code>delete</code> calls both at once whenever allocating memory to the
+heap, then just fill in the code between the two calls.</p>
+<h2>Golden Rule of Dynamic Memory Allocation</h2>
+<p>Never use <code>new</code> operators. "These operators have no place in modern C++". Always use either the
+<code>std::vector&lt;&gt;</code> container or a smart pointer.</p>
+<h2>Raw Pointers and Smart Pointers</h2>
+<p>All the pointer types previously discussed were raw pointers, which we have to manually delete from
+the heap when we are done with it. A smart pointer will handle this automatically when it is removed
+from scope. Smart pointers effectively prevent all the hazards mentioned int he previous section.</p>
+<h3>Using <code>unique_ptr&lt;T&gt;</code> Pointers</h3>
+<p>This is a smart pointer. The following is a pointer to a single double value. Initialize them using
+the <strong>old syntax</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="p">{</span><span class="mf">999.0</span><span class="p">}</span><span class="w"> </span><span class="c1">// init them all to 999.0</span>
+</code></pre></div>
+
+<p>Here is the syntax for making a pointer to an array of size <code>n</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">[]</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="p">[</span><span class="n">n</span><span class="p">];</span><span class="w"></span>
+</code></pre></div>
+
+<p>In C++17, we now can define <code>unique_ptr</code>'s using the following statement:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">auto</span><span class="w"> </span><span class="n">pdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">999.0</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>To "reset" the pointer such that it doesn't point to anything, we can call the <code>reset()</code> method:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pdata</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span><span class="w">      </span><span class="c1">// address is nullptr</span>
+</code></pre></div>
+
+<p>You can turn a smart pointer into a raw pointer using the <code>release()</code> method, which returns the
+memory address the smart pointer initially pointed to. <strong>Always make sure to actually set the
+address that the pointer initially pointed to, otherwise memory leaks can occur!</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">raw_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pdata</span><span class="p">.</span><span class="n">release</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Understanding References</h2>
+<p>There are other sections here, but i <em>think</em> I understand references, so I am skipping.</p>
+<h1>Questions</h1>
+<ul>
+<li>how does <code>new[]</code> know how much memory it needs to free?</li>
+</ul>
+<p><a href="chapter07.html">To Chapter 7</a></p>
+    </body>
+</html>
+
+

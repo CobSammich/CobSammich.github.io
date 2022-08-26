@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>7-4</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 7 Index</a></p>
+<h1>Bringing Paths into Scope with the <code>use</code> Keyword</h1>
+<p>In the previous section we learned how to use modules by writing their absolute or relative paths.
+It would be annoying to have to write their whole path every time we would like to use a function
+from a module, we have to write the full path. We can bring a path into scope and just call the
+items in that path with the <code>use</code> keyword.</p>
+<p>In the code below, we bring the <code>crate::front_of_house::hosting</code> module into scope of the
+<code>eat_at_restaurant</code> function so we only have to specify <code>hosting::add_to_waitlist</code> to call the
+functon:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">use</span><span class="w"> </span><span class="k">crate</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 1: Bringing a module into scope using a full path.
+</p>
+
+<p>The same thing can be accomplished using relative paths as well:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">use</span><span class="w"> </span><span class="bp">self</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 2: Bringing a module into scope using a relative path.
+</p>
+
+<h2>Creating Idiomatic <code>use</code> Paths</h2>
+<p>When bringing functions into scope, it's idiomatic to use bring their parent module into scope and
+then use that function by specifying the parent module and function. This makes it clear where the
+function is defined within the parent module and not somewhere locally in the file.</p>
+<p>In contrast, it is idiomatic to specify the full path for structs and enums. Supposedly there is no
+strong reason behind this idiom, it is just what is done most of the time in practice -- and I
+agree.</p>
+<h2>Providing New Names with the <code>as</code> Keyword</h2>
+<p>You can change the name of a module, function, struct, etc that you bring into scope using <code>as</code> like
+in Python:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fmt</span>::<span class="nb">Result</span><span class="p">;</span><span class="w"></span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="nb">Result</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">IoResult</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">function1</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nb">Result</span> <span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// --snip--</span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">function2</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nc">IoResult</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// --snip--</span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 3: Using the `as` keyword to change the name of the `io::Result` type.
+</p>
+
+<h2>Re-exporting Names with <code>pub use</code></h2>
+<p>To enable the code that calls our code to refer to the name as if it had been defined in that code's
+scope, we can combine <code>pub</code> and <code>use</code>. This is called re-exporting because we're bringing an item
+into scope but also making the item available for other to bring into their scope.</p>
+<p>For example, say we changed the import line in Listing 2 to <code>pub use</code> instead of just <code>use</code>, we
+allow external code to be able to call the <code>add_to_waitlist</code> function.</p>
+<h2>Using External Packages</h2>
+<p>To use external crates within your programs, you must add the crate name and version to the
+<code>Cargo.toml</code> file like we did in Chapter 2:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">rand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0.8.3&quot;</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 4: Inclusion of crate in `Cargo.toml` file.
+</p>
+
+<p>Then to bring the <code>rand</code> crate into scope, we put <code>use rand::Rng;</code> in our program.</p>
+<p>You can use modules that are in the standard library without having to put them in the <code>Cargo.toml
+file</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">collections</span>::<span class="n">HashMap</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 5: Inclusion of the standard library's hashmap.
+</p>
+
+<h2>Using Nested Paths to Clean Up Large <code>use</code> Lists</h2>
+<p>If we wanted to pull in more than one item from a module, we can define multiple in one line rather
+than making calls on multiple lines using the <code>use module:{item1, item2};</code> syntax.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="p">{</span><span class="n">cmp</span>::<span class="n">Ordering</span><span class="p">,</span><span class="w"> </span><span class="n">io</span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 6: Bringing in multiple items with the same prefix into scope using nested paths.
+</p>
+
+<p>Let's say that you wanted to bring <code>std::io</code> into scope as well as <code>std::io::Write</code>. You can
+actually do this on one line too via the following.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="p">{</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">Write</span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 7: Combining module and function into one use statement.
+</p>
+
+<h2>The Glob Operator</h2>
+<p>If we wanted to bring <em>all</em> public items defined in a path into scope, we can specify that path
+followed by the glob operator, <code>*</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">collections</span>::<span class="o">*</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 8: Using the glob operator to bring all items in a module into scope.
+</p>
+
+<p>Using the glob can be a bad practice however because it then makes it difficult to tell what is in
+the namespace.</p>
+<p><a href="7-5.html">Next Section (7.5)</a></p>
+    </body>
+</html>
+
+

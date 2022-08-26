@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>hello-world</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../rust-index.html">Return to Rust Index</a></p>
+<h1>Chapter 1: Getting Started</h1>
+<p>This chapter covers compilation and running of rust programs manually and using Cargo.</p>
+<h2>Writing and Running a Rust Program</h2>
+<p>The basic Hello, World! Program written in rust written in the file <code>main.rs</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Hello, World!&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>To compile the program:</p>
+<div class="codehilite"><pre><span></span><code>$ rustc main.rs
+</code></pre></div>
+
+<p>Running the program should produce the following output:</p>
+<div class="codehilite"><pre><span></span><code>$ ./main
+Hello, World!
+</code></pre></div>
+
+<h2>Anatomy of a Rust Program</h2>
+<p>The <code>main</code> function is essential in all rust programs. The <code>main</code> function is the first thing run
+a rust program. The <code>main</code> function can have parameters, but in this case it has none.</p>
+<p>Why is there an exclamation mark after <code>println</code>? -- The ! defines a "macro".
+<a href="../chapter19.html">Chapter 19</a> explains macros in detail. For now just know that a macro behaves
+differently than a normal function.</p>
+<h2>Creating a Project with Cargo</h2>
+<p>You'll typically just use Cargo for compilation and running of our Rust programs. It handles those
+things.</p>
+<p>Create a new project:</p>
+<div class="codehilite"><pre><span></span><code>$ cargo new hello_cargo
+</code></pre></div>
+
+<p>This creates a <code>hello_cargo/</code> directory with a <code>Cargo.toml</code> file and a <code>src/</code> subdirectory with a
+Hello, World! program already written!</p>
+<p>The <code>Cargo.toml</code> is shown below.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[package]</span><span class="w"></span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;hello_cargo&quot;</span><span class="w"></span>
+<span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0.1.0&quot;</span><span class="w"></span>
+<span class="n">edition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;2018&quot;</span><span class="w"></span>
+
+<span class="k">[dependencies]</span><span class="w"></span>
+</code></pre></div>
+
+<p>The dependencies section is where you would list all of your project's dependencies.</p>
+<h2>Building and Running a Cargo Project</h2>
+<p>To build a cargo project:</p>
+<div class="codehilite"><pre><span></span><code>$ cargo build
+</code></pre></div>
+
+<p>This will create an executable in <code>target/debug/hello_cargo</code>. you can run this executable by entering
+the following command:</p>
+<div class="codehilite"><pre><span></span><code>$ ./target/debug/hello_cargo
+Hello, World!
+</code></pre></div>
+
+<p>You can compile and run the program with the single command:</p>
+<div class="codehilite"><pre><span></span><code>$ cargo run
+</code></pre></div>
+
+<p>Note that Rust will only compile the project when it senses there is a change in the source files.
+Means that running/testing the program several times with <code>cargo run</code> is fine to do.</p>
+<p>You can also check the program for errors without producing the binary by running <code>cargo check</code>.</p>
+<h2>Building for Release</h2>
+<p>You can build a release version of your project using <code>cargo build --release</code>. This will compile the
+project "with optimizations" making it faster to run, but also makes it take longer to compile. The
+release version is built in <code>target/release/hello_cargo</code>.</p>
+<h2>Summary</h2>
+<p>Let’s recap what we’ve learned so far about Cargo:</p>
+<ul>
+<li>We can build a project using <code>cargo build</code>.</li>
+<li>We can build and run a project in one step using <code>cargo run</code>.</li>
+<li>We can build a project without producing a binary to check for errors using <code>cargo check</code>.</li>
+<li>Instead of saving the result of the build in the same directory as our code, Cargo stores it in
+  the <code>target/debug</code> directory.</li>
+</ul>
+<p>Differentiating between debug and release:</p>
+<ul>
+<li>Debug is best if you want to compile and run your code often</li>
+<li>Release is best if you want the binary to be a production level optimized program.</li>
+</ul>
+<p><a href="../chapter02/index.html">Next Chapter</a></p>
+    </body>
+</html>
+
+

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>5-3</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 5 Index</a></p>
+<h1>Method Syntax</h1>
+<p>Methods are separate from function because they are defined within the contect of a struct. Their
+first parameter is always <code>self</code>.</p>
+<h2>Defining Methods</h2>
+<p>We can write methods for structs using the following syntax:</p>
+<div class="codehilite"><pre><span></span><code><span class="cp">#[derive(Debug)]</span><span class="w"></span>
+<span class="k">struct</span> <span class="nc">Rectangle</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">width</span>: <span class="kt">u32</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">height</span>: <span class="kt">u32</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">impl</span><span class="w"> </span><span class="n">Rectangle</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">fn</span> <span class="nf">area</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">u32</span> <span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">height</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">rect1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Rectangle</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">width</span>: <span class="mi">30</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">height</span>: <span class="mi">50</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;The area of the rectangle is {} square pixels.&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">rect1</span><span class="p">.</span><span class="n">area</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>We can now simply call <code>rect1.area()</code> to compute the area of the rectangle struct. <code>impl</code> stands for
+implementation in this case. You can put multiple functions within the <code>impl</code> scope that will all
+act as functions for the <code>Rectangle</code> type.</p>
+<p><code>self</code> here is an alias for the type that the <code>impl</code> block is for. Methods can take ownership of
+self, borrow self immutably as we’ve done here, or borrow self mutably, just as they can any other
+parameter.</p>
+<p>In the case above, we chose <code>&amp;self</code> because we don't want to take ownership of the struct, we just
+want to read the data within it. If we wanted to write to the data in the struct, we would change
+the method definition to <code>&amp;mut self</code>.</p>
+<p>You can also name functions the same thing as their fields. Rust will know the difference because
+the function usage will have <code>()</code> after it. Many API's use functions with the same name as a field
+as getters for the object.</p>
+<h2>Methods with More Parameters</h2>
+<p>You can specify functions for structs that use multiple parameters. Below is an example of a
+function that checks if another rectangle struct can fit within <code>this</code> one:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">impl</span><span class="w"> </span><span class="n">Rectangle</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">fn</span> <span class="nf">area</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">u32</span> <span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">height</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">fn</span> <span class="nf">can_hold</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">other</span>: <span class="kp">&amp;</span><span class="nc">Rectangle</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">bool</span> <span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">height</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>Notice that we are defining two functions in one <code>impl</code> block.</p>
+<h2>Associated Functions</h2>
+<p>All functions defined within an <code>impl</code> block are called <em>associated functions</em> because they're
+assiciated with that type. We can define associated functions that don't have <code>self</code> as their first
+parameter making them not methods because they don't need an instance of the object to work with. We
+have done this with the <code>String::from</code> function. We took the generic <code>String</code> object and created one
+from it.</p>
+<p>Let's do something similar here, where we take the <code>Rectangle</code> object and create a square using the
+same side lengths. To call the function, we would have to use the <code>::</code> syntax. This function is
+namespaced by the struct. The <code>::</code> syntax is used for both associated functions and namespaces
+created by modules.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">impl</span><span class="w"> </span><span class="n">Rectangle</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">fn</span> <span class="nf">square</span><span class="p">(</span><span class="n">size</span>: <span class="kt">u32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Rectangle</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Rectangle</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">width</span>: <span class="nc">size</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">height</span>: <span class="nc">size</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Multiple <code>impl</code> Blocks</h2>
+<p>Each struct is can have multiple <code>impl</code> blocks or just a single <code>impl</code> block. Both are valid syntax,
+although using one is probably easier to read unless there is a good reason to use more than one
+(Private vs Public functions?).</p>
+<ul>
+<li><a href="../chapter06/index.html">Next Chapter</a></li>
+</ul>
+    </body>
+</html>
+
+

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>3-2</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 3 Index</a></p>
+<h1>Chapter 3.2: Data Types</h1>
+<p>Rust is a statically typed language, meaning it must know the types of all variables at compile
+time. Rust can sometimes infer what data type we are trying to use, but in other cases we will need
+to tell rust what data type we want a variable to be. For example, if we are doing integer division
+or if we want to convert some user input (string) to a specific numeric data type.</p>
+<h2>Scalar Types</h2>
+<p>A scalar type is a single value. The four primary scalar types are integers, floating-point numbers,
+booleans, and characters.</p>
+<h3>Integer Types</h3>
+<p>The table below shows the different types for integer values. To declare a variable to have a type,
+one would write: <code>let x: i8 = 55</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Length</th>
+<th>Signed</th>
+<th>Unsigned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8-bit</td>
+<td>i8</td>
+<td>u8</td>
+</tr>
+<tr>
+<td>16-bit</td>
+<td>i16</td>
+<td>u16</td>
+</tr>
+<tr>
+<td>32-bit</td>
+<td>i32</td>
+<td>u32</td>
+</tr>
+<tr>
+<td>64-bit</td>
+<td>i64</td>
+<td>u64</td>
+</tr>
+<tr>
+<td>128-bit</td>
+<td>i128</td>
+<td>u128</td>
+</tr>
+<tr>
+<td>arch</td>
+<td>isize</td>
+<td>usize</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>isize</code> and <code>usize</code> variable types correspond to the system architecture. So for me it would be
+64 bit.</p>
+<p>You can also define variables to their number literals, like hexes and binary values. Number
+literals can also use <code>_</code> as a visual separator to make certain numbers easier to read.</p>
+<table>
+<thead>
+<tr>
+<th>Number literals</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decimal</td>
+<td>98_222</td>
+</tr>
+<tr>
+<td>Hex</td>
+<td>0xff</td>
+</tr>
+<tr>
+<td>Octal</td>
+<td>0o77</td>
+</tr>
+<tr>
+<td>Binary</td>
+<td>0b1111_0000</td>
+</tr>
+<tr>
+<td>Byte (u8 only)</td>
+<td>b'A'</td>
+</tr>
+</tbody>
+</table>
+<h3>Integer Overflow</h3>
+<p>When compiling programs in debug mode, rust will include checks for integer overflow that cause your
+program to panic (error and exit) at runtime. When compiling in release mode, Rust does not include
+these checks for integer overflow, so the typical value wrapping occurs here.</p>
+<h3>Floating-Point Types</h3>
+<p>There are two floating point types: <code>f32</code> and <code>f64</code> for 32-bit and 64-bit floating point types
+respectively. The default type is <code>f64</code>.</p>
+<p>Below shows the various mathematical operations we can do in Rust with floating point numbers.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// addition</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// subtraction</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">difference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">95.5</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">4.3</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// multiplication</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">30</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// division</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">quotient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">56.7</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">32.2</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">floored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="c1">// Results in 0 -- integer division</span>
+
+<span class="w">    </span><span class="c1">// remainder</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">remainder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">43</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h3>The Boolean Type</h3>
+<p>Declaring boolean types is fairly straightforward:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">f</span>: <span class="kt">bool</span> <span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w"> </span><span class="c1">// explicit type annotation</span>
+</code></pre></div>
+
+<h3>Character Types</h3>
+<p>Characters are represented as four bytes in rust rather than the typical 1 byte you would see in
+other programming languages. Because of this, we can use various different characters within our
+programs, like math symbols, letters from other languages, and emojis.</p>
+<h2>Compound Types</h2>
+<p>Compound types can group multiple values into one type, like tuples or arrays.</p>
+<h3>The Tuple Type</h3>
+<p>Tuples can group a number of values with a variety of types into one compound type. Tuples also have
+a fixed length -- once declared, they cannot grow or shrink.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">tup</span>: <span class="p">(</span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="kt">u8</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mf">6.4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can also "destruct" a tuple into multiple values.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">tup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mf">6.4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tup</span><span class="p">;</span><span class="w"></span>
+<span class="fm">println!</span><span class="p">(</span><span class="s">&quot;The value of y is: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>We can also access the individual values of a tuple by using a period followed by the index:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">x</span>: <span class="p">(</span><span class="kt">i32</span><span class="p">,</span><span class="w"> </span><span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="kt">u8</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="mf">6.4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">five_hundred</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">six_point_four</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>The tuple without any values is expressed by <code>()</code>, and is a special type that only has the value
+<code>()</code>. The type is called the <em>unit type</em> and the value is called the <em>unit value</em>. The unit value is
+returned by functions explicitly if they don't return any other value.</p>
+<h3>The Array Type</h3>
+<p>Arrays can be created in the following way:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">];</span><span class="w"></span>
+</code></pre></div>
+
+<p>Arrays have a fixed size in rust unlike in Python and are useful when you want your data allocated
+to the stack rather than the heap. The vector type (discussed in chapter 8) has the functionality to
+grow or shrink.</p>
+<p>To give the array a type and size, you would declare the array as such:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">arr</span>: <span class="p">[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">];</span><span class="w"></span>
+</code></pre></div>
+
+<p>If you want the array to contain the same value for all entries, you can specify the initial value
+at creation:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">5</span><span class="p">];</span><span class="w"> </span><span class="c1">// == [0,0,0,0,0]</span>
+</code></pre></div>
+
+<h3>Accessing array elements</h3>
+<p>Accessing array elements is straightforward:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">];</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Invalid Array Access</h3>
+<p>Trying to access an array element outside of the bounds of the array gives the following error:</p>
+<div class="codehilite"><pre><span></span><code>Please enter an array index.
+<span class="m">10000</span>
+thread <span class="s1">&#39;main&#39;</span> panicked at <span class="s1">&#39;index out of bounds: the len is 5 but the index is 10000&#39;</span>, src/main.rs:72:19
+note: run with <span class="sb">`</span><span class="nv">RUST_BACKTRACE</span><span class="o">=</span><span class="m">1</span><span class="sb">`</span> environment variable to display a backtrace
+</code></pre></div>
+
+<p>Other lower level languages like C don't have this functionality. If a mistake like this was done in
+C, the program would simply let the user access some portion of memory outside of the program
+altogether.</p>
+<p><a href="3-3.html">Next Section</a></p>
+    </body>
+</html>
+
+

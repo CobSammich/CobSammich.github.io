@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-04-03" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>chapter05</title>
+        <link rel="stylesheet" href="../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="cpp-index.html">Back to C++ Index</a></p>
+<h1>Chapter 5 Notes - Arrays and Loops</h1>
+<h2>Arrays</h2>
+<p>Here is an example of defining an array of fixed size, with values that are uninitialized. If we try
+to access these values, they will contain "junk". We can also set values within the array using the
+second line:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">temperatures</span><span class="p">[</span><span class="mi">366</span><span class="p">];</span><span class="w">   </span><span class="c1">// Define an array of 366 temperatures</span>
+<span class="n">temperatures</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">99.0</span><span class="p">;</span><span class="w">     </span><span class="c1">// set the fourth array element to 99</span>
+</code></pre></div>
+
+<p>You can define an array and initialize the values within using this code:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="mi">26</span><span class="p">,</span><span class="w"> </span><span class="mi">37</span><span class="p">,</span><span class="w"> </span><span class="mi">47</span><span class="p">,</span><span class="w"> </span><span class="mi">55</span><span class="p">,</span><span class="w"> </span><span class="mi">62</span><span class="p">,</span><span class="w"> </span><span class="mi">75</span><span class="p">};</span><span class="w">  </span><span class="c1">// Define &amp; initialize array of 6 heights</span>
+</code></pre></div>
+
+<p>If you only want to define the first few values of the array and initialize the rest to be zero, you
+can type:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="mi">26</span><span class="p">,</span><span class="w"> </span><span class="mi">37</span><span class="p">,</span><span class="w"> </span><span class="mi">47</span><span class="p">};</span><span class="w">        </span><span class="c1">// Element values: 26 37 47 0 0 0</span>
+</code></pre></div>
+
+<p>To initialize an array and all its values to zero, we can write:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="c1">// all elements are 0</span>
+</code></pre></div>
+
+<p>To define an immutable array, we can use the <code>const</code> keyword:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="mi">26</span><span class="p">,</span><span class="w"> </span><span class="mi">37</span><span class="p">,</span><span class="w"> </span><span class="mi">47</span><span class="p">,</span><span class="w"> </span><span class="mi">55</span><span class="p">,</span><span class="w"> </span><span class="mi">62</span><span class="p">,</span><span class="w"> </span><span class="mi">75</span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<h2>The <code>for</code> Loop</h2>
+<p>For loops have the following syntax:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">initialization</span><span class="p">;</span><span class="w"> </span><span class="n">condition</span><span class="p">;</span><span class="w"> </span><span class="n">iteration</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// do something</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>Here is an example of how to loop over and copy the elements of an array into a new array.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">rainfall</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="mf">1.1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.8</span><span class="p">,</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="mf">3.7</span><span class="p">,</span><span class="w"> </span><span class="mf">2.1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span><span class="w"> </span><span class="mf">1.8</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.3</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9</span><span class="p">,</span><span class="w"> </span><span class="mf">0.7</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5</span><span class="p">};</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="n">copy</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">12</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w">   </span><span class="c1">// i varies from 0 to 11</span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rainfall</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w">         </span><span class="c1">// Copy ith element of rainfall to ith element of copy</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<blockquote>
+<p>Note that <code>size_t</code> is not a built-in fundamental type. It is an alias for the largest unsigned
+integer type supported by the compiler.</p>
+</blockquote>
+<p>If the contents of the loop is only a single line like in the previous example, the curly brackets
+can be excluded:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">12</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w">   </span><span class="c1">// i varies from 0 to 11</span>
+<span class="w">    </span><span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rainfall</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w">         </span><span class="c1">// Copy ith element of rainfall to ith element of copy</span>
+</code></pre></div>
+
+<h3>Minimizing Bugs</h3>
+<p>Using this arbitrary value of <code>12</code> to loop over the elements of the array is very bug-prone. For
+example, if we add another value in the array we want to loop over, but forget to update this value
+to be <code>13</code>, we will then be missing a data value. Instead, it is safer to define a variable <code>size</code>
+that we use to initialize the array with and loop over the array:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="p">{</span><span class="mi">12</span><span class="p">};</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="n">rainfall</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="mf">1.1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.8</span><span class="p">,</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="mf">3.7</span><span class="p">,</span><span class="w"> </span><span class="mf">2.1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span><span class="w"> </span><span class="mf">1.8</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.3</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9</span><span class="p">,</span><span class="w"> </span><span class="mf">0.7</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5</span><span class="p">};</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="n">copy</span><span class="p">[</span><span class="n">size</span><span class="p">]</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w">  </span><span class="c1">// i varies from 0 to size-1</span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rainfall</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w">          </span><span class="c1">// Copy ith element of rainfall to ith element of copy</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>An easier solution than the above is to actually just use <code>std::size()</code> to find the number of
+elements in the array:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">rainfall</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="mf">1.1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.8</span><span class="p">,</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="mf">3.7</span><span class="p">,</span><span class="w"> </span><span class="mf">2.1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span><span class="w"> </span><span class="mf">1.8</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.3</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9</span><span class="p">,</span><span class="w"> </span><span class="mf">0.7</span><span class="p">,</span><span class="w"> </span><span class="mf">0.5</span><span class="p">};</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="n">copy</span><span class="p">[</span><span class="n">std</span><span class="o">::</span><span class="n">size</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)]</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">size</span><span class="p">(</span><span class="n">rainfall</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w">  </span><span class="c1">// i varies from 0 to size-1</span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rainfall</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w">          </span><span class="c1">// Copy ith element of rainfall to ith element of copy</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>The Range-Based <code>for</code> Loop</h2>
+<p>The <em>range-based</em> for <code>loop</code> iterates over all the values in an array. Here is the general syntax:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">range_declaration</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">range_expression</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// do something</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>Here is an example of summing the values in an array:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">values</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">13</span><span class="p">,</span><span class="w"> </span><span class="mi">17</span><span class="p">,</span><span class="w"> </span><span class="mi">19</span><span class="p">,</span><span class="w"> </span><span class="mi">23</span><span class="p">,</span><span class="w"> </span><span class="mi">29</span><span class="p">};</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">values</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">total</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can use the <code>auto</code> keyword when defining the looping variable, because the compiler knows the
+type of the values contained in <code>values</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">values</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">total</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h2>The <code>while</code> Loop</h2>
+<p>The <code>while</code> loop has the general form:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">condition</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// do things</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>The <code>do-while</code> Loop</h2>
+<p>The <code>do-while</code> loop is similar to the <code>while</code> loop in that the loop continues for as long as the
+specified loop condition remains true. The difference is that the loop condition is check <strong>at the
+<em>end</em></strong> of the <code>do-while</code> loop.</p>
+<p>The <code>do-while</code> loop has the following general form:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">do</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// things</span>
+<span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">condition</span><span class="p">);</span><span class="w"> </span><span class="c1">// checks the condition - if false, stop</span>
+</code></pre></div>
+
+<h2>Skipping Loop Iterations</h2>
+<p>You can skip a specific iteration of a loop using the <code>continue</code> keyword. I know how this works
+already... here is an example from the book:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Ex5_08.cpp</span>
+<span class="c1">// Using the continue statement to display ASCII character codes</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iomanip&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cctype&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;limits&gt;</span><span class="cp"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Output the column headings</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Character &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Hexadecimal &quot;</span><span class="w"></span>
+<span class="w">            </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="w">  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Decimal &quot;</span><span class="w">   </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">uppercase</span><span class="p">;</span><span class="w">                                      </span><span class="c1">// Uppercase hex digits</span>
+<span class="w">  </span><span class="c1">// Output characters and corresponding codes</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">ch</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="w">  </span><span class="k">do</span><span class="w"></span>
+<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">std</span><span class="o">::</span><span class="n">isprint</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span><span class="w">                                          </span><span class="c1">// If it&#39;s not printable...</span>
+<span class="w">      </span><span class="k">continue</span><span class="p">;</span><span class="w">                                                     </span><span class="c1">// ...skip this iteration</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ch</span><span class="w">                                 </span><span class="c1">// Character</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">hex</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span><span class="w">  </span><span class="c1">// Hexadecimal</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dec</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">setw</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span><span class="w">  </span><span class="c1">// Decimal</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">ch</span><span class="o">++</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">());</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Breaking Out of Loops</h2>
+<p>You can break out of loops entirely using the <code>break</code> keyword. These are often used in "indefinite
+<code>for</code> loops", or a loop that does not define a condition to end on, thus making them run forever. We
+can define a condition(s) to break out of these loops.</p>
+<h2>Array of Characters</h2>
+<p>We can define an array of characters like we can with numeric values. We can can simply treat this
+array as just an array of characters, or we can treat it as a String. When initializing a string
+literal, any uninitialized values will be initialized with the "null character" <code>'\0'</code>. Strings
+ending in the null character can be treated as C-style strnigs.</p>
+<p>We can create a string literal that is not the same size as the array using the following code:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Mae West&quot;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>Because the name does not take up all 10 list positions, the other two characters are initialized as
+the null character:</p>
+<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch05/images/string_literal.png" /></p>
+<p>You can initialize an array from a string literal without a size given. This will append the null
+character to the end of it. So for the example:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="w"> </span><span class="n">vowels</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;aeiou&quot;</span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>The array <code>vowels</code> actually has six elements.</p>
+<h2>Multidimensional Arrays</h2>
+<p>You can define multidimensional arrays using the following syntax:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">carrots</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+</code></pre></div>
+
+<p>The array stores the values contiguously in memory by row-column order as seen by figure 5-2.
+<img alt="" src="/home/cob/Coding/study_groups/c++17/ch05/images/2D_array_memory.png" /></p>
+<p>To initialize the values within a multidimensional array, you can use the following statement:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">carrots</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                       </span><span class="p">{</span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="mf">3.2</span><span class="p">,</span><span class="w"> </span><span class="mf">3.7</span><span class="p">,</span><span class="w"> </span><span class="mf">4.1</span><span class="p">},</span><span class="w">   </span><span class="c1">// First row</span>
+<span class="w">                       </span><span class="p">{</span><span class="mf">4.1</span><span class="p">,</span><span class="w"> </span><span class="mf">3.9</span><span class="p">,</span><span class="w"> </span><span class="mf">1.6</span><span class="p">,</span><span class="w"> </span><span class="mf">3.5</span><span class="p">},</span><span class="w">   </span><span class="c1">// Second row</span>
+<span class="w">                       </span><span class="p">{</span><span class="mf">2.8</span><span class="p">,</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9</span><span class="p">,</span><span class="w"> </span><span class="mf">1.1</span><span class="p">}</span><span class="w">    </span><span class="c1">// Third row</span>
+<span class="w">                     </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>Similar to other array initializations, you can leave values out and they will be automatically
+initialized to zero. This is because the compiler knows how big the array needs to be.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">carrots</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                       </span><span class="p">{</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="mf">3.2</span><span class="w">      </span><span class="p">},</span><span class="w">       </span><span class="c1">// First row</span>
+<span class="w">                       </span><span class="p">{</span><span class="w"> </span><span class="mf">4.1</span><span class="w">           </span><span class="p">},</span><span class="w">       </span><span class="c1">// Second row</span>
+<span class="w">                       </span><span class="p">{</span><span class="w"> </span><span class="mf">2.8</span><span class="p">,</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9</span><span class="w"> </span><span class="p">}</span><span class="w">        </span><span class="c1">// Third row</span>
+<span class="w">                     </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Setting Dimensions by Default</h3>
+<p>You can let the compiler determine the size of the first dimension of an array with any number of
+dimensions from the set of initializing values. The compiler <strong>can only</strong> determine the size of the
+first dimension however.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">carrots</span><span class="p">[][</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                      </span><span class="p">{</span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="mf">3.2</span><span class="w">       </span><span class="p">},</span><span class="w">      </span><span class="c1">// First row</span>
+<span class="w">                      </span><span class="p">{</span><span class="mf">4.1</span><span class="w">            </span><span class="p">},</span><span class="w">      </span><span class="c1">// Second row</span>
+<span class="w">                      </span><span class="p">{</span><span class="mf">2.8</span><span class="p">,</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span><span class="w">  </span><span class="mf">0.9</span><span class="w"> </span><span class="p">}</span><span class="w">       </span><span class="c1">// Third row</span>
+<span class="w">                    </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>Here is an example of trying to make the compiler deduce the size of more than just the first
+dimension. <strong>THIS DOES NOT COMPILE</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">carrots</span><span class="p">[][]</span><span class="w"> </span><span class="p">{</span><span class="w">                </span><span class="cm">/* Does not compile! */</span><span class="w"></span>
+<span class="w">                      </span><span class="p">{</span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="mf">3.2</span><span class="p">,</span><span class="w"> </span><span class="mf">3.7</span><span class="p">,</span><span class="w"> </span><span class="mf">4.1</span><span class="p">},</span><span class="w">      </span><span class="c1">// First row</span>
+<span class="w">                      </span><span class="p">{</span><span class="mf">4.1</span><span class="p">,</span><span class="w"> </span><span class="mf">3.9</span><span class="p">,</span><span class="w"> </span><span class="mf">3.7</span><span class="p">,</span><span class="w"> </span><span class="mf">3.5</span><span class="p">},</span><span class="w">      </span><span class="c1">// Second row</span>
+<span class="w">                      </span><span class="p">{</span><span class="mf">2.8</span><span class="p">,</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span><span class="w"> </span><span class="mf">0.9</span><span class="p">,</span><span class="w"> </span><span class="mf">1.1</span><span class="p">}</span><span class="w">       </span><span class="c1">// Third row</span>
+<span class="w">                    </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>Aaaand heres ane example of a 3D array:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">numbers</span><span class="p">[][</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                      </span><span class="p">{</span><span class="w"></span>
+<span class="w">                        </span><span class="p">{</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">  </span><span class="mi">4</span><span class="p">,</span><span class="w">  </span><span class="mi">6</span><span class="p">,</span><span class="w">  </span><span class="mi">8</span><span class="p">},</span><span class="w"></span>
+<span class="w">                        </span><span class="p">{</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">  </span><span class="mi">5</span><span class="p">,</span><span class="w">  </span><span class="mi">7</span><span class="p">,</span><span class="w">  </span><span class="mi">9</span><span class="p">},</span><span class="w"></span>
+<span class="w">                        </span><span class="p">{</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">  </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">14</span><span class="p">}</span><span class="w"></span>
+<span class="w">                      </span><span class="p">},</span><span class="w"></span>
+<span class="w">                      </span><span class="p">{</span><span class="w"></span>
+<span class="w">                        </span><span class="p">{</span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">18</span><span class="p">},</span><span class="w"></span>
+<span class="w">                        </span><span class="p">{</span><span class="mi">13</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="mi">17</span><span class="p">,</span><span class="w"> </span><span class="mi">19</span><span class="p">},</span><span class="w"></span>
+<span class="w">                        </span><span class="p">{</span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="mi">18</span><span class="p">,</span><span class="w"> </span><span class="mi">21</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">}</span><span class="w"></span>
+<span class="w">                      </span><span class="p">}</span><span class="w"></span>
+<span class="w">                    </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Multidimensional Character Arrays</h3>
+<p>Here is an example of defining a multidimensional character array. Where we store a list of names.
+Each name in the list can accommodate up to 80 characters in it.</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="w"> </span><span class="n">stars</span><span class="p">[][</span><span class="mi">80</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                   </span><span class="s">&quot;Robert Redford&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                   </span><span class="s">&quot;Hopalong Cassidy&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                   </span><span class="s">&quot;Lassie&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                   </span><span class="s">&quot;Slim Pickens&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                   </span><span class="s">&quot;Boris Karloff&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                   </span><span class="s">&quot;Oliver Hardy&quot;</span><span class="w"></span>
+<span class="w">                 </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Alternatives to Using an Array</h2>
+<p>The Standard Library defines many data structures called <em>containers</em>. One of the data structures is
+<code>std::array&lt;&gt;</code> and <code>std::vector&lt;&gt;</code>. The compiler uses the following templates for both:</p>
+<ul>
+<li><code>std::array&lt;T,N&gt;</code></li>
+<li><code>std::vector&lt;T&gt;</code></li>
+</ul>
+<h3>Using <code>array&lt;T,N&gt;</code> Containers</h3>
+<p>The <code>array&lt;T,N&gt;</code> container is a fixed sequence of <code>N</code> elements of type <code>T</code>. This is no different to
+the regular array except that you specify the type and size differently. Here is an example of
+initializing an array of $100$ doubles:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span><span class="p">;</span><span class="w"></span>
+<span class="c1">// same as</span>
+<span class="kt">double</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span><span class="w"></span>
+</code></pre></div>
+
+<p>Initialize the values of a <code>std::array</code> to zero:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can easliy set all the elements of an array to any other given value using the <code>fill()</code>
+function for the <code>array&lt;&gt;</code> object. Here is an example:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">values</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">3.14159</span><span class="p">)</span><span class="w"> </span><span class="c1">// set all elements to pi</span>
+</code></pre></div>
+
+<p>You can access elements the same way you would access a regular array:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%f&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="mi">4</span><span class="p">]);</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can also access the elements of a <code>std::array</code> using the <code>values.at(i)</code> function for an index,
+<code>i</code>. This comes with the added benefit that it will check if <code>i</code> is a valid index and is memory
+stored by <code>values</code>. The compiler will throw an error if you are attempting to access an invalid
+index.</p>
+<h3>Operations on <code>array&lt;&gt;</code>s As a Whole</h3>
+<p>You can compare entire array containers using comparison operators:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="mi">4</span><span class="o">&gt;</span><span class="w"> </span><span class="n">these</span><span class="w"> </span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0</span><span class="p">};</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="mi">4</span><span class="o">&gt;</span><span class="w"> </span><span class="n">those</span><span class="w"> </span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0</span><span class="p">};</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="mi">4</span><span class="o">&gt;</span><span class="w"> </span><span class="n">them</span><span class="w">  </span><span class="p">{</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span><span class="w"> </span><span class="mf">5.0</span><span class="p">};</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">these</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">those</span><span class="p">)</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;these and those are equal.&quot;</span><span class="w">    </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">those</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">them</span><span class="p">)</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;those and them are not equal.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">those</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">them</span><span class="p">)</span><span class="w">   </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;those are greater than them.&quot;</span><span class="w">  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">them</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">those</span><span class="p">)</span><span class="w">   </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;them are less than those.&quot;</span><span class="w">     </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Using <code>std::vector&lt;T&gt;</code> Containers</h2>
+<p>Vectors can be dynamically allocated, thus a size is not needed on initialization.</p>
+<p>Declare vector:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>Insert value into vector:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">values</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="mf">3.14159</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>Declare a vector of with a predefined number of elements (not fixed) with all values set to zero:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>Declare a vector of with a predefined number of elements of type <code>long</code> (not fixed) with all values
+set to 99:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">numbers</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mf">99L</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Deleting Elements</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span><span class="w"> </span><span class="c1">// contains 100 elements initialized to 99</span>
+<span class="n">data</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w">                   </span><span class="c1">// removes all elements</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span><span class="w"> </span><span class="c1">// contains 100 elements initialized to 99</span>
+<span class="n">data</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span><span class="w">                </span><span class="c1">// remove the last element</span>
+</code></pre></div>
+
+<p><a href="chapter06.html">To Chapter 6</a></p>
+    </body>
+</html>
+
+

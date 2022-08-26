@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-06-14" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>chapter07</title>
+        <link rel="stylesheet" href="../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="cpp-index.html">Back to C++ Index</a></p>
+<h1>Chapter 7 Notes - Working with Strings</h1>
+<h2>A Better Class of String</h2>
+<p>So far we've learned about creating strings using an array of chars and a null terminator to make
+what's referred to as a "C-style String". We can instead use the <code>cstring</code> header to introduce a
+wide range of functionality for C-style strings such as joining strings, searching for substrings,
+and comparing C-style strings.</p>
+<p>The <code>string</code> header, defined the <code>std::string</code> type, which is supposed to be much easier to use than
+the C-style string.</p>
+<h2>Defining <code>string</code> Objects</h2>
+<p>To define an empty string, use the following statement:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">empty</span><span class="p">;</span><span class="w">      </span><span class="c1">// An empty string</span>
+</code></pre></div>
+
+<p>You can also define a string object from a string literal:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">proverb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Many a mickle makes a muckle.&quot;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can also conver a std::string object to a C-style string using the following two methods:</p>
+<ol>
+<li>Using <code>c_str()</code> converts a <code>std::string</code> into a <code>const char*</code></li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">proverb_c_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">proverb</span><span class="p">.</span><span class="n">c_str</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+
+<ol>
+<li>Using <code>data()</code> converts a <code>std::string</code> into a <code>char*</code>. Before C++17, <code>data()</code> also would convert
+   to a constsnt value</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">proverb_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">proverb</span><span class="p">.</span><span class="n">data</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can obtain a strings length (not including any terminating characters) using the <code>length()</code>
+function:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">proverb</span><span class="p">.</span><span class="n">length</span><span class="p">();</span><span class="w">  </span><span class="c1">// Outputs 29</span>
+</code></pre></div>
+
+<p>Once can also define repeating characters using the following declaration:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sleeping</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;z&#39;</span><span class="p">)</span><span class="w"> </span><span class="c1">// &quot;zzzzzz&quot;</span>
+</code></pre></div>
+
+<p>Initializing variables based on other variables:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sentence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">proverb</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can also define strings from substrings of whole strings using the following declaration:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">phrase</span><span class="w"> </span><span class="p">{</span><span class="n">proverb</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">13</span><span class="p">};</span><span class="w"> </span><span class="c1">// initialize with first 13 characters</span>
+</code></pre></div>
+
+<blockquote>
+<p>Note that the third argument here is not the ending index, but actually the length of the string
+starting at the index defined by the 2nd argument.</p>
+</blockquote>
+<p>So, to take the substring from the 7th to the 13th index, you'd actually want to make the following
+call:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">phrase</span><span class="w"> </span><span class="p">{</span><span class="n">proverb</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Operations with String Objects</h2>
+<p>You can swap or modify strings using the following statements:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">adjective</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;hornswoggling&quot;</span><span class="p">};</span><span class="w">   </span><span class="c1">// Defines adjective</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">word</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;rubbish&quot;</span><span class="p">};</span><span class="w">              </span><span class="c1">// Defines word</span>
+<span class="n">word</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">adjective</span><span class="p">;</span><span class="w">                          </span><span class="c1">// Modifies word</span>
+<span class="n">adjective</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;twotiming&quot;</span><span class="p">;</span><span class="w">                   </span><span class="c1">// Modifies adjective</span>
+</code></pre></div>
+
+<p>You can concatenate two strings together using the <code>+</code> operator which has been overriden for String
+objects:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">adjective</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">word</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; whippersnapper&quot;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>Note that only <code>String</code> objects can be concatenated this way. String literals do not have the
+overriden concatenation ability. Thus, the following statement is invalid:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot; whippersnapper&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">word</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>To get around this, you can convert the string literals into <code>Strings</code> using one of the following
+methods:</p>
+<ul>
+<li>
+<p>You can omit the + between the two literals: <code>" whippersnapper" " " + word</code>. Two or more string
+  literals in sequence will be concatenated into a single literal by the compiler.</p>
+</li>
+<li>
+<p>You can introduce parentheses: <code>"whippersnapper" + (" " + word)</code></p>
+</li>
+<li>
+<p>Type cast: <code>std::string{" whippersnapper"} + " " + word</code></p>
+</li>
+<li>
+<p>You can turn one or both of the literals into a std::string object by adding the suffix s to the
+  literal, such as in <code>" whippersnapper"s +  " " + word</code>. For this to work, you first have to add a
+  using namespace <code>std::string_literals</code>;</p>
+</li>
+</ul>
+<p><a href="chapter08.html">To Chapter 8</a></p>
+    </body>
+</html>
+
+

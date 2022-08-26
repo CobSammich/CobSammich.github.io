@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>4-1</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 4 Index</a></p>
+<h2>What is Ownership</h2>
+<p>Ownership is Rust's central feature. Instead of garbage collector's or manually freeing and
+allocating memory, Rust opts for a third approach: memory is managed through a system of ownership
+with a set of rules that the compiler checks at compile time.</p>
+<p>This section we will learn ownership by working through examples that focus on the String data
+structure.</p>
+<h2>Ownership Rules</h2>
+<ul>
+<li>Each value in Rust has a variable that's called its <strong>owner</strong>.</li>
+<li>There can only be one owner at a time.</li>
+<li>When the owner goes out of scope, the value will be dropped.</li>
+</ul>
+<h2>The <code>String</code> Type</h2>
+<p>A String literal is when a string is hardcoded into out program. String literals are not always what
+we want because they are immutable. You can instead create a <code>String</code> from a string literal using
+the <code>from</code> function:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>This kind of string can be mutated unlike a string literal:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">push_str</span><span class="p">(</span><span class="s">&quot;, world!&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// push_str() appends a literal to a String</span>
+
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">);</span><span class="w"> </span><span class="c1">// This will print `hello, world!`</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>The difference between a string literal and <code>String</code> is how these two types deal with memory.</p>
+<h2>Memory and Allocation</h2>
+<p>For string literals, we know the contents at compile time, so the text is hardcoded directly into
+the final executable. This makes string literals fast and efficient, but this comes from the string
+literal's immutability -- we know the fixed size at compile time.</p>
+<p>With the <code>String</code> type, in order to support a mutable, growable piece of text, we need to allocate
+an amount of memory on the heap, unknown at compile time to hold the contents. This means:
+* The memory must be requested from the memory allocator at runtime.
+* We need a way of returning this memory to the allocator when we're done with our <code>String</code>.</p>
+<p>Rust returns the memory automatically once the variable that owns it goes out of scope. When a
+variable goes out of scope, Rust calls a special function for us: <code>drop</code>, and it's where the author
+of <code>String</code> can put the code to return the memory. Rust calls <code>drop</code> automatically at the ending of
+closing brackets.</p>
+<h2>Ways Variables and Data Interact: Move</h2>
+<p>Multiple variables can interact with the same data in different ways in Rust.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>In the example above, we assign a value to <code>x</code> and then bind <code>x</code> to <code>y</code>. The are separate variables
+assigned to separate values on the stack. If we modify <code>x</code>, we do not modify <code>y</code>.</p>
+<p>The string version of this behaves differently.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s1</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>A <code>String</code> is made up of thre components:
+1. A pointer to the memory that holds the contents of the string.
+2. a length of the string.
+3. a capacity of the string.</p>
+<p>When we assign <code>s2</code> to <code>s1</code>, we are just copying the pointer, the length, and the capacity. If this
+were to behave like the 1st example, Rust would need to copy all the data <code>s1</code> points to on the
+heap. See the images below for a comparison -- Left image shows what is happening, while the right
+image shows what <strong>IS NOT</strong> happening but might be expected.</p>
+<p><img src="https://doc.rust-lang.org/book/img/trpl04-02.svg" width="45%" height="400px"/>
+<img src="https://doc.rust-lang.org/book/img/trpl04-03.svg" width="45%" height="400px"/></p>
+<p>Because both data pointers point to the same location on the heap, when Rust calls the <code>drop</code>
+function, you might think we try to free the same location in memory twice -- which could lead to
+memory corruption. To ensure memory safety, Rust "invalidates" the variable <code>s1</code>. Rust knows
+internally now that <code>s1</code> is not valid and that it doesn't need to be freed once it comes out of
+scope.</p>
+<p>In other languages, we would likely think of this concept as a <em>shallow copy</em>, but because Rust
+invalidates <code>s1</code> this operation is known as a <em>move</em>.</p>
+<h2>Ways Variables and Data Interact: Clone</h2>
+<p>We can also deep copy data in the heap by using the <code>clone</code> method. Below is an example of deep
+copying data.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s1</span><span class="p">.</span><span class="n">clone</span><span class="p">();</span><span class="w"></span>
+<span class="c1">// modifies s1 but not s2</span>
+<span class="n">s1</span><span class="p">.</span><span class="n">push_str</span><span class="p">(</span><span class="s">&quot;, world!&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="fm">println!</span><span class="p">(</span><span class="s">&quot;s1 = {}, s2 = {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">s1</span><span class="p">,</span><span class="w"> </span><span class="n">s2</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+
+<p>Rust also uses the function <code>copy</code> that allows you to still use the variable you copied in that
+scope.</p>
+<h2>Ownership and Functions</h2>
+<p>Passing a value to a function is similar to assigning a value to a variable. When we pass a variable
+to a function it will move or copy that variable just like an assignment would.</p>
+<p>Below is an example of passing variables to functions. When we put <code>s</code> into the <code>takes_ownership</code>
+function, <code>s</code>'s value moves into the function and will no longer be valid after that function call.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// s comes into scope</span>
+
+<span class="w">    </span><span class="n">takes_ownership</span><span class="p">(</span><span class="n">s</span><span class="p">);</span><span class="w">             </span><span class="c1">// s&#39;s value moves into the function...</span>
+<span class="w">                                    </span><span class="c1">// ... and so is no longer valid here</span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w">                      </span><span class="c1">// x comes into scope</span>
+
+<span class="w">    </span><span class="n">makes_copy</span><span class="p">(</span><span class="n">x</span><span class="p">);</span><span class="w">                  </span><span class="c1">// x would move into the function,</span>
+<span class="w">                                    </span><span class="c1">// but i32 is Copy, so it&#39;s okay to still</span>
+<span class="w">                                    </span><span class="c1">// use x afterward</span>
+
+<span class="p">}</span><span class="w"> </span><span class="c1">// Here, x goes out of scope, then s. But because s&#39;s value was moved, nothing</span>
+<span class="w">  </span><span class="c1">// special happens.</span>
+
+<span class="k">fn</span> <span class="nf">takes_ownership</span><span class="p">(</span><span class="n">some_string</span>: <span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// some_string comes into scope</span>
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">some_string</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// Here, some_string goes out of scope and `drop` is called. The backing</span>
+<span class="w">  </span><span class="c1">// memory is freed.</span>
+
+<span class="k">fn</span> <span class="nf">makes_copy</span><span class="p">(</span><span class="n">some_integer</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// some_integer comes into scope</span>
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">some_integer</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// Here, some_integer goes out of scope. Nothing special happens.</span>
+</code></pre></div>
+
+<h2>Return Values and Scope</h2>
+<p>Here is another example of how returning variables from a function can also transfer ownership.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gives_ownership</span><span class="p">();</span><span class="w">         </span><span class="c1">// gives_ownership moves its return</span>
+<span class="w">                                        </span><span class="c1">// value into s1</span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// s2 comes into scope</span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">s3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">takes_and_gives_back</span><span class="p">(</span><span class="n">s2</span><span class="p">);</span><span class="w">  </span><span class="c1">// s2 is moved into</span>
+<span class="w">                                        </span><span class="c1">// takes_and_gives_back, which also</span>
+<span class="w">                                        </span><span class="c1">// moves its return value into s3</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// Here, s3 goes out of scope and is dropped. s2 was moved, so nothing</span>
+<span class="w">  </span><span class="c1">// happens. s1 goes out of scope and is dropped.</span>
+
+<span class="k">fn</span> <span class="nf">gives_ownership</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nb">String</span> <span class="p">{</span><span class="w">             </span><span class="c1">// gives_ownership will move its</span>
+<span class="w">                                             </span><span class="c1">// return value into the function</span>
+<span class="w">                                             </span><span class="c1">// that calls it</span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">some_string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;yours&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// some_string comes into scope</span>
+
+<span class="w">    </span><span class="n">some_string</span><span class="w">                              </span><span class="c1">// some_string is returned and</span>
+<span class="w">                                             </span><span class="c1">// moves out to the calling</span>
+<span class="w">                                             </span><span class="c1">// function</span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// This function takes a String and returns one</span>
+<span class="k">fn</span> <span class="nf">takes_and_gives_back</span><span class="p">(</span><span class="n">a_string</span>: <span class="nb">String</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">String</span> <span class="p">{</span><span class="w"> </span><span class="c1">// a_string comes into</span>
+<span class="w">                                                      </span><span class="c1">// scope</span>
+
+<span class="w">    </span><span class="n">a_string</span><span class="w">  </span><span class="c1">// a_string is returned and moves out to the calling function</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>To get around losing ownership of values after passing them into a function, we can return that
+value back from the function. If we want to return something else, we can return multiple values
+using a tuple:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">s2</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calculate_length</span><span class="p">(</span><span class="n">s1</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;The length of &#39;{}&#39; is {}.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">s2</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">calculate_length</span><span class="p">(</span><span class="n">s</span>: <span class="nb">String</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="p">(</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="kt">usize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="p">();</span><span class="w"> </span><span class="c1">// len() returns the length of a String</span>
+
+<span class="w">    </span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>My Thoughts on Ownership</h2>
+<p>I like that we "move" data to another variable and render the other invalid. For things like data
+pipelines I feel like that is really useful, as we likely don't want to be operating on the dataset
+that is at an older step in the pipeline.</p>
+<p>I don't like that if we pass a String into a function, it becomes invalid. We can always have that
+function return the string back, but what if we need to return something else. Can functions have
+multiple return values? Okay, they literally address this in the very last paragraph of this
+section.</p>
+<p><a href="4-2.html">Next Section</a></p>
+    </body>
+</html>
+
+

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>8-3</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 8 Index</a></p>
+<h1>Storing Keys with Associated Values in Hash Maps</h1>
+<p>Hash maps are represented as <code>HashMap&lt;K, V&gt;</code>, which stores a mapping of keys of type <code>K</code> to values
+of type <code>V</code>. It uses a <em>hashing function</em> to determine how the keys and values are placed into
+memory.</p>
+<p>Hash maps are useful when you want to look up data using a key instead of an index. Accessing a
+value in a hash map is therefore $O(1)$.</p>
+<h2>Creating a New Hash Map</h2>
+<p>Like the previous two collections, you can create an empty hash map with <code>new</code> and to add elements
+use the <code>insert</code> function. The code snippet below shows two teams, Blue and Yellow, that start with
+$10$ and $50$ points respectively.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">collections</span>::<span class="n">HashMap</span><span class="p">;</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">scores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HashMap</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Yellow&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 1: Creating a new hash map and inserting a couple key-value pairs.
+</p>
+
+<p>Note that the hash map collection needs to be explicitly added to the scope of our project unlike
+the previous two collections. This is because the Hash Map is used less often than Vectors and
+Strings.</p>
+<p>Hash Maps operate similarly to how Vectors do: their data is stored on the heap, their keys must
+all be the same type, and their values must all be the same type.</p>
+<p>Another way to construct hash maps is by using the <code>collect</code> method on a vector of tuples, where
+each tuple consists of a key and a its value. The <code>collect</code> method can gather data into several
+different collection types, including the <code>HashMap</code>. For example, if we had two vectors - one
+representing team names, and another representing team scores - we could use the <code>zip</code> method to
+create an iterator of tuples where each team name is paired with their score. We can then use the
+<code>collect</code> method on that iterator of tuples to create a hash map. The code snippet below shows this:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">collections</span>::<span class="n">HashMap</span><span class="p">;</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">teams</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">vec!</span><span class="p">[</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">),</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Yellow&quot;</span><span class="p">)];</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">initial_scores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">vec!</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">];</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">scores</span>: <span class="nc">HashMap</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"></span>
+<span class="w">    </span><span class="n">teams</span><span class="p">.</span><span class="n">into_iter</span><span class="p">().</span><span class="n">zip</span><span class="p">(</span><span class="n">initial_scores</span><span class="p">.</span><span class="n">into_iter</span><span class="p">()).</span><span class="n">collect</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 2: Creating a hash map from two vectors of team names and team scores using the `collect`
+method.
+</p>
+
+<p>In listing 2, we can use the hash map type annotation: <code>HashMap&lt;_, _&gt;</code> with underscores because Rust
+can infer the types that the hash map contains based on the data types in each vector.</p>
+<h2>Hash Maps and Ownership</h2>
+<p>In the example from Listing 2, because <code>i32</code> implements the <code>Copy</code> trait, the values in
+<code>initial_scores</code> are copied over to the hash map, while the strings in <code>teams</code> are now owned by the
+hash map, <code>scores</code>. In this case, all the strings in <code>teams</code> are now invalid because they are owned
+by the hash map -- You cannot try to call on the strings in <code>teams</code>.</p>
+<p>You can insert references as values into the hash map, so that the ownership of the values aren't
+taken over by the hash map. In this case you must make sure that the string references pointed to by
+the hash map are valid for at least as long as the hash map is valid, such that we are not accessing
+invalid data at any point. This is a concept related to lifetimes which will be introduced in
+Chapter 10.</p>
+<h2>Accessing Values in a Hash Map</h2>
+<p>To retrieve values out of the hash map, you would use the <code>get</code> method:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">scores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HashMap</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Yellow&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="n">team_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scores</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="o">&amp;</span><span class="n">team_name</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 3: Accessing the Blue teams score using the `get` method.
+</p>
+
+<p>In Listing 3, <code>score</code> will have the value <code>Some(&amp;10)</code> because <code>get</code> returns an <code>Option&lt;&amp;V&gt;</code>. If
+there is no value for that key, then <code>get</code> returns <code>None</code>. Your program will need to handle the
+<code>Option</code> in one of the ways that was covered in <a href="../chapter06/6-2.html">Chapter 6</a>.</p>
+<p>We can iterate over each key/value pair in a hash map similarly to how we did with Vectors:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">scores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HashMap</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Yellow&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">&amp;</span><span class="n">scores</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;{}: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 4: Iterating over all key/value pairs in a hash map.
+</p>
+
+<h2>Updating a Hash Map</h2>
+<p>When dealing with hash maps, each key can only have one value associated with it. When you want to
+change data in a hash map the developer has to decide how they want to handle the case where a key
+is already assigned a value. Something the book fails to mention here is that a hash map can contain
+Vectors as the value, thus we can append data to the vector and don't have to worry about
+overwriting or losing old data.</p>
+<h3>Overwriting a Value</h3>
+<p>If we insert a value into a hashmap using a key that already has a value, that value will be
+replaced. In Listing 5, we call <code>insert</code> twice, which replaces the value that was inserted in the
+first call to <code>insert</code>. The print statement verifies that the current value for "Blue" is $25$.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">scores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HashMap</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
+<span class="c1">// replaces the value 10 for Blue</span>
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">25</span><span class="p">);</span><span class="w"></span>
+
+<span class="fm">println!</span><span class="p">(</span><span class="s">&quot;{:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">scores</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 5: Replacing a value stored in the key "Blue".
+</p>
+
+<h3>Only Inserting a Value If the Key Has No Value</h3>
+<p>Hash maps have a "special API" that checks if a key has a value already and if it does not insert
+some value for it. The API is called <code>entry</code>. The return value of <code>entry</code> is an enum called <code>Entry</code>
+that represents a value that may or may not exist. Listing 6 shows how we would use the <code>entry</code> API
+to check whether a value for the Yellow team exists and if it doesn't we would insert the value
+$50$.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">scores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HashMap</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+<span class="n">scores</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
+
+<span class="c1">// Yellow doesn&#39;t have a value, so insert 50</span>
+<span class="n">scores</span><span class="p">.</span><span class="n">entry</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Yellow&quot;</span><span class="p">)).</span><span class="n">or_insert</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
+<span class="c1">// Blue does have a value already so don&#39;t do anything</span>
+<span class="n">scores</span><span class="p">.</span><span class="n">entry</span><span class="p">(</span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Blue&quot;</span><span class="p">)).</span><span class="n">or_insert</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span><span class="w"></span>
+
+<span class="fm">println!</span><span class="p">(</span><span class="s">&quot;{:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">scores</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 6: Using the `entry` method to insert a value if the key does not already have a value. $50$
+is inserted for Yellow, but nothing happens for Blue.
+</p>
+
+<p>The <code>or_insert</code> method returns a mutable reference to the value for the corresponding <code>Entry</code> key if
+that key exists, and if not, it inserts the parameter as the new value for this key and returns a
+mutable reference to the new value.</p>
+<h3>Updating a Value Based on the Old Value</h3>
+<p>A common use case for hash maps is to increment a value based on the frequency that it occurs. In
+this case, we would want to add one to the old value if it exists, otherwise place zero there.
+Listing 7 shows how one would implement this to count the frequency of words in a string.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;hello world wonderful world&quot;</span><span class="p">;</span><span class="w"></span>
+
+<span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HashMap</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// iterate over each word in text</span>
+<span class="k">for</span><span class="w"> </span><span class="n">word</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">split_whitespace</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">.</span><span class="n">entry</span><span class="p">(</span><span class="n">word</span><span class="p">).</span><span class="n">or_insert</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">count</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="fm">println!</span><span class="p">(</span><span class="s">&quot;{:?}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 7: Counting the frequency that a word occurs in a String.
+</p>
+
+<p>Because <code>or_insert</code> returns a mutable reference to the value corresponding to <code>word</code> no matter if it
+exists or not, we can dereference and increment the value of <code>count</code> either way.</p>
+<h2>Hashing Functions</h2>
+<p>The standard library <code>HashMap</code> uses a hashing function called
+<a href="https://en.wikipedia.org/wiki/SipHash">SipHash</a>, which was developed in response to DoS attacks
+occurring in late 2011. This hashing function sacrifices speed for security. If a faster hashing
+function is desired, you can specify a different <em>hasher</em>, which is implemented by the <code>BuildHasher</code>
+trait.</p>
+<p><a href="../chapter09/index.html">Chapter 9</a> discusses error handling.</p>
+    </body>
+</html>
+
+

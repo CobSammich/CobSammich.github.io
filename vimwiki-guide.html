@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>vimwiki-guide</title>
+        <link rel="stylesheet" href="style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Index</a></p>
+<h1>Guide to Vimwiki</h1>
+<p><a href="https://github.com/vimwiki/vimwiki">Vimwiki</a> is a Vim plugin that acts as a note-taking program for
+storing information in a wikipedia like style. It uses internal file links to different pages within
+the wiki to keep track of information for various subjects.</p>
+<h2>Prerequisites</h2>
+<p>Vimwiki requires the following lines in your <code>.vimrc</code> to render properly:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">set</span> <span class="nb">nocompatible</span>
+<span class="k">filetype</span> plugin <span class="k">on</span>
+<span class="nb">syntax</span> <span class="k">on</span>
+</code></pre></div>
+
+<h2>Key Mappings</h2>
+<p>Vimwiki comes with a variety of key bindings that aim to make navigation of the individual vimwiki
+pages more simple. I've listed the more useful key bindings below. Note that <code>&lt;Leader&gt;</code> is <code>\</code> by
+default.</p>
+<ul>
+<li><code>&lt;Leader&gt;ww</code>     -- Open default wiki index file.</li>
+<li><code>&lt;Leader&gt;wt</code>     -- Open default wiki index file in a new tab.</li>
+<li><code>&lt;Leader&gt;ws</code>     -- Select and open wiki index file.</li>
+<li><code>&lt;Leader&gt;wr</code>     -- Rename wiki file you are in.</li>
+<li><code>&lt;Enter&gt;</code>        -- Follow/Create wiki link.</li>
+<li><code>&lt;Backspace&gt;</code>    -- Go back to parent(previous) wiki link.</li>
+<li><code>&lt;Tab&gt;</code>          -- Find next wiki link.</li>
+<li><code>&lt;Shift-Tab&gt;</code>    -- Find previous wiki link.</li>
+</ul>
+<h2>Using Markdown Syntax</h2>
+<p>By default, the vimwiki syntax is different from any other markup language. I already know markdown
+syntax and use it often, so being able to use a familiar syntax within vimwiki was much more
+appealing to me than having to switch between multiple syntaxes.</p>
+<p>To use markdown syntax within your vimwiki files, add the following to your vimrc</p>
+<div class="codehilite"><pre><span></span><code><span class="k">let</span> <span class="k">g</span>:vimwiki_list <span class="p">=</span> [{<span class="s1">&#39;path&#39;</span>: <span class="s1">&#39;~/vimwiki/&#39;</span><span class="p">,</span> <span class="s1">&#39;syntax&#39;</span>: <span class="s1">&#39;markdown&#39;</span><span class="p">,</span> <span class="s1">&#39;ext&#39;</span>: <span class="s1">&#39;.md&#39;</span>}]
+</code></pre></div>
+
+<p>Now if you type <code>&lt;Leader&gt;ww</code> in vim, you will create an index.md file that is now your vimwiki
+homepage.</p>
+<h2>Compilation to HTML</h2>
+<p>A great feature that comes with vimwiki is that it allows you to compile your wiki entries to HTML
+to view in browser. This functionality is native to the original vimwiki syntax and does not require
+any configuration. However, because I opted to use markdown syntax, it means it requires a separate
+script to compile the wiki entries to HTML.</p>
+<p>I chose to use <a href="https://github.com/WnP/vimwiki_markdown">vimwiki_markdown</a> to handle the markdown to
+HTML compilation. To tell vimwiki to use this script to compile to html, we have to add a
+<code>custom_wiki2html</code> argument to our vimrc:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">let</span> <span class="k">g</span>:vimwiki_list <span class="p">=</span> [{ <span class="s1">&#39;path_html&#39;</span>: <span class="s1">&#39;~/vimwiki/site_html/&#39;</span><span class="p">,</span> <span class="s1">&#39;custom_wiki2html&#39;</span>: <span class="s1">&#39;vimwiki_markdown&#39;</span>}]
+</code></pre></div>
+
+<p>Note that we are adding to the <code>vimwiki_list</code> environment variable in our vimrc. Don't overwrite it,
+that whole variable should look like this so far:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">let</span> <span class="k">g</span>:vimwiki_list <span class="p">=</span> [{
+    \ <span class="s1">&#39;path&#39;</span>: <span class="s1">&#39;~/vimwiki&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;syntax&#39;</span>: <span class="s1">&#39;markdown&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;ext&#39;</span>: <span class="s1">&#39;.md&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;path_html&#39;</span>: <span class="s1">&#39;~/vimwiki/site_html/&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;custom_wiki2html&#39;</span>: <span class="s1">&#39;vimwiki_markdown&#39;</span>}]
+</code></pre></div>
+
+<p>To compile your vimwiki entries to HTML, use the following commands within vim:</p>
+<ul>
+<li><code>:VimwikiAll2HTML</code> -- Compiles all vimwiki entries to html and places them in <code>~/vimwiki/site_html/</code>.</li>
+<li><code>:Vimwiki2HTMLBrowse</code> -- Compiles only the current vimwiki entry and opens the file within the
+  default browser.</li>
+</ul>
+<h3>Code Block Highlighting</h3>
+<p>Another thing that we need to configure after switching to markdown syntax, is the code block
+automatic highlighting. This is the default nature with the vimwiki syntax, but the markdown syntax
+does not support this.</p>
+<p>To get code block highlighting to work within vim, you need to add the following option to your
+vimrc and include whatever code/filetypes you want syntax highlighting support for:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">let</span> <span class="k">g</span>:markdown_fenced_languages <span class="p">=</span> [<span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;cpp&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;rust&#39;</span><span class="p">,</span> <span class="s1">&#39;vim&#39;</span><span class="p">,</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span> <span class="s1">&#39;javascript&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span>]
+</code></pre></div>
+
+<p>I also added the following conceallevel option because I did not like how the tick marks dissapeared
+around code blocks:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">let</span> <span class="k">g</span>:vimwiki_conceallevel <span class="p">=</span> <span class="m">0</span>
+</code></pre></div>
+
+<h3>Syntax Highlighting in HTML</h3>
+<p>For rendering the HTML, you need to have a html template that vimwiki_markdown reads and uses to
+format it's HTML files. Add the following to your vimrc vimwiki_list variable:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">let</span> <span class="k">g</span>:vimwiki_list <span class="p">=</span> [{
+    \ <span class="s1">&#39;template_path&#39;</span>: <span class="s1">&#39;~/vimwiki/templates/&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;template_default&#39;</span>: <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;template_ext&#39;</span>: <span class="s1">&#39;.html&#39;</span><span class="p">,</span>
+</code></pre></div>
+
+<p>To accomplish code syntax highlighting run this command in the directory containing all of the wiki
+html files:</p>
+<div class="codehilite"><pre><span></span><code>pygmentize -S default -f html -a .codehilite &gt;&gt; style.css
+</code></pre></div>
+
+<p>Then include the following lines in your default html template <code>~/vimwiki/templates/default.html</code>:</p>
+<ul>
+<li>In the head section of the template:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css&quot;</span> <span class="p">/&gt;</span>
+</code></pre></div>
+
+<ul>
+<li>At the bottom of the body section of the template:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;pre&#39;</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">block</span> <span class="p">=&gt;</span> <span class="nx">hljs</span><span class="p">.</span><span class="nx">highlightBlock</span><span class="p">(</span><span class="nx">block</span><span class="p">));</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<h3>Rendering Math Equations in HTML</h3>
+<p>In order to include LaTeX style math equations within your vimwiki entries, you need to clone
+<a href="https://github.com/mathjax/MathJax">MathJax</a> locally to your hard drive. I cloned mine in
+<code>/home/cob/git_repos/MathJax/</code>.</p>
+<div class="codehilite"><pre><span></span><code>git clone https://github.com/mathjax/MathJax.git
+</code></pre></div>
+
+<p>The vimwiki help page is a good resource for how to get MathJax working with vimwiki. Just type
+<code>:h vimwiki-syntax-math</code> within vim.</p>
+<p>Add the following to the top of the body in your vimwiki html template:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="nx">MathJax</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">tex</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">inlineMath</span><span class="o">:</span> <span class="p">[[</span><span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;\\(&#39;</span><span class="p">,</span> <span class="s1">&#39;\\)&#39;</span><span class="p">]]</span>
+      <span class="p">},</span>
+      <span class="nx">svg</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">fontCache</span><span class="o">:</span> <span class="s1">&#39;global&#39;</span>
+      <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<hr />
+<h2>Full Configuration</h2>
+<p>Here are all the relevant configuration files for getting vimwiki working as I wanted.</p>
+<h3>~/.vimrc</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">let</span> <span class="k">g</span>:vimwiki_list <span class="p">=</span> [{
+    \ <span class="s1">&#39;path&#39;</span>: <span class="s1">&#39;~/vimwiki&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;template_path&#39;</span>: <span class="s1">&#39;~/vimwiki/templates/&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;template_default&#39;</span>: <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;template_ext&#39;</span>: <span class="s1">&#39;.html&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;syntax&#39;</span>: <span class="s1">&#39;markdown&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;ext&#39;</span>: <span class="s1">&#39;.md&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;path_html&#39;</span>: <span class="s1">&#39;~/vimwiki/site_html/&#39;</span><span class="p">,</span>
+    \ <span class="s1">&#39;custom_wiki2html&#39;</span>: <span class="s1">&#39;vimwiki_markdown&#39;</span>}]
+<span class="k">let</span> <span class="k">g</span>:vimwiki_hl_headers <span class="p">=</span> <span class="m">1</span>
+<span class="c">&quot; Don&#39;t allow all markdown files to be vimwiki files</span>
+<span class="k">let</span> <span class="k">g</span>:vimwiki_global_ext <span class="p">=</span> <span class="m">0</span>
+<span class="c">&quot; Use code syntax highlighitng within vimwiki pages.</span>
+<span class="k">let</span> <span class="k">g</span>:markdown_fenced_languages <span class="p">=</span> [<span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;cpp&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;rust&#39;</span><span class="p">,</span> <span class="s1">&#39;vim&#39;</span><span class="p">,</span>
+                                 \ <span class="s1">&#39;css&#39;</span><span class="p">,</span> <span class="s1">&#39;erb=eruby&#39;</span><span class="p">,</span> <span class="s1">&#39;javascript&#39;</span><span class="p">,</span> <span class="s1">&#39;js=javascript&#39;</span><span class="p">,</span> <span class="s1">&#39;json=javascript&#39;</span><span class="p">,</span>
+                                 \ <span class="s1">&#39;ruby&#39;</span><span class="p">,</span> <span class="s1">&#39;sass&#39;</span><span class="p">,</span> <span class="s1">&#39;xml&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span>]
+<span class="c">&quot; Disable hiding tick marks for code blocks -- default is 2 for vimwiki</span>
+<span class="k">let</span> <span class="k">g</span>:vimwiki_conceallevel <span class="p">=</span> <span class="m">0</span>
+</code></pre></div>
+
+<h3>~/vimwiki/templates/default.html</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;date&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;%date%&quot;</span> <span class="na">scheme</span><span class="o">=</span><span class="s">&quot;YYYY-MM-DD&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;width=device-width&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>%title%<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;%root_path%style.css&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span>
+         <span class="na">media</span><span class="o">=</span><span class="s">&quot;screen&quot;</span> <span class="na">title</span><span class="o">=</span><span class="s">&quot;no title&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;%root_path%pygmentize.css&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span>
+         <span class="na">media</span><span class="o">=</span><span class="s">&quot;screen&quot;</span> <span class="na">title</span><span class="o">=</span><span class="s">&quot;no title&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/css&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css&quot;</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+            <span class="nx">MathJax</span> <span class="o">=</span> <span class="p">{</span>
+              <span class="nx">tex</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">inlineMath</span><span class="o">:</span> <span class="p">[[</span><span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="s1">&#39;$&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;\\(&#39;</span><span class="p">,</span> <span class="s1">&#39;\\)&#39;</span><span class="p">]]</span>
+              <span class="p">},</span>
+              <span class="nx">svg</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">fontCache</span><span class="o">:</span> <span class="s1">&#39;global&#39;</span>
+              <span class="p">}</span>
+            <span class="p">};</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+            <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;pre&#39;</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">block</span> <span class="p">=&gt;</span> <span class="nx">hljs</span><span class="p">.</span><span class="nx">highlightBlock</span><span class="p">(</span><span class="nx">block</span><span class="p">));</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        %content%
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+    </body>
+</html>
+
+

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-03-27" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>chapter03</title>
+        <link rel="stylesheet" href="../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="cpp-index.html">Back to C++ Index</a></p>
+<h1>Chapter 3 Notes - Working with Fundamental Data Types</h1>
+<h2>Bitwise Operators</h2>
+<p>I know most of what is discussed in this section already -- skipping. Bitwise shifts and operations.</p>
+<h2>Enumerated Data Types</h2>
+<p>You can define Enums using the following syntax:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Day</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Monday</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Tuesday</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Wednesday</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Thursday</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Friday</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Saturday</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Sunday</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<p>Each enumerator will be automatically defined to have a fixed integer value of type <code>int</code> by
+default. The first nmame in the list, in our case <code>Monday</code>, will have the value 0, <code>Tuesday</code> will be
+1, and so on.</p>
+<p>You can define <code>today</code> as a variable of the enumaration type <code>Day</code> with the following syntax:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Day</span><span class="w"> </span><span class="n">today</span><span class="w"> </span><span class="p">{</span><span class="n">Day</span><span class="o">::</span><span class="n">Tuesday</span><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can have enums that include literals. For example:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">enum</span><span class="w"> </span><span class="nc">Class</span><span class="w"> </span><span class="n">Punctuation</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="p">{</span><span class="n">Comma</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;,&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">Exclamation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;!&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">Question</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;?&#39;</span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Aliases for Data Types</h2>
+<p>You can use the <code>using</code> keyword to specify a type alias for a data type. For example, you can define
+the type alias <code>BigOnes</code> as being equivalent to the standard type <code>unsigned long long</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">BigOnes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="p">;</span><span class="w"></span>
+<span class="n">BigOnes</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="c1">// initialize value of unsigned long long</span>
+</code></pre></div>
+
+<p>Another way to create a type alias is using the following older syntax:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">BigOnes</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p><a href="chapter04.html">To Chapter 4</a></p>
+    </body>
+</html>
+
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>index</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../../index.html">Back to Homepage</a></p>
+<h1>Sudoku Solver</h1>
+<p>This program aims to solve sudoku puzzles. The input to the program is an image of a sudoku puzzle.
+Thus, there are two major portions of this program:</p>
+<ol>
+<li>Extract the given sudoku puzzle information from the image into a relevant data structure so we
+   may solve it.</li>
+<li>Write an algorithm to solve the sudoku puzzle.</li>
+</ol>
+<p>This page will act as a journal for any references, implementation decisions, etc.</p>
+<h2>Finding the Sudoku board</h2>
+<p>Some ideas for picking out and finding the corners of the sudoku board are:</p>
+<ul>
+<li>Matched filter</li>
+<li>Optical character recognition (OCR)</li>
+</ul>
+<p><img src="https://docs.opencv.org/3.0-beta/_images/houghlinesdemo.gif" class="center" width="80%"></p>
+    </body>
+</html>
+
+

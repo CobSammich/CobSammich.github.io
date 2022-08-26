@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>index</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../rust-index.html">Return to Rust Index</a></p>
+<h1>Chapter 9: Error Handling</h1>
+<p>Rust has a number of features for handling situations when something may go wrong. Rust requires you
+to handle the possibility of an error before your code will compile. This makes your code more
+robust to any issues that could occur.</p>
+<p>There are two major error categories: <em>recoverable</em> and <em>unrecoverable</em> errors. Recoverable errors
+allow for the program to continue to run by maybe making the user fix the name of an input file.
+Unrecoverable errors are often bugs, like trying to access an invalid array location.</p>
+<p>Other programming languages handle errors with exceptions, but Rust doesn't have exceptions.
+Instead, it uses the type <code>Result&lt;T, E&gt;</code> for recoverable erros and the <code>panic!</code> macro to stop the
+program for unrecoverable errors.</p>
+<h2>The Chapter Subsections are as follows:</h2>
+<ol>
+<li><a href="9-1.html">9.1</a> -- Unrecoverable Errors with <code>panic!</code></li>
+<li><a href="9-2.html">9.2</a> -- Recoverable Errors with Result</li>
+<li><a href="9-3.html">9.3</a> -- To <code>panic</code> or Not to <code>panic!</code></li>
+</ol>
+<p><a href="../chapter10/index.html">Next Chapter</a></p>
+    </body>
+</html>
+
+

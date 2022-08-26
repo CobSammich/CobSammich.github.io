@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>9-1</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 9 Index</a></p>
+<h1>Unrecoverable Errors with <code>panic!</code></h1>
+<p>When "bad things" happen in your code and there's nothing you can do to fix it, you can use the
+<code>panic!</code> macro. When the <code>panic!</code> macro is called, your program will print a failure message,
+"unwind" and clean up the stack, and then quit. This solution is commonly used when a bug is
+detected and the programmer is not sure how to handle the error.</p>
+<blockquote>
+<p>Note: For large programs, sometimes "unwinding" (walking back up the stack and cleaning up data)
+can be a lot of work. An alternative is to <strong>abort</strong> the program without cleaning up the memory,
+which then needs to be handled by the operating system. This also significantly reduces the size of
+your binary. To enable Rust programs to abort, add <code>panic = 'abort'</code> to the appropriate profile in
+your <code>Cargo.toml</code> file.</p>
+</blockquote>
+<p>Listing one shows how one would call <code>panic!</code> in a simple program.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Panicking here, cousin!&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 1: Calling `panic!` in a program.
+</p>
+
+<p>This code causes an error message to display telling us that our code panicked with the error
+message given in the code. In cases where our code might be panicking in places we didn't
+specifically program it to (for example, a <code>panic!</code> call is in an external function our code is
+calling), we can use the backtrace of the functions the <code>panic!</code> call came from to figure out where
+our code is causing the problem.</p>
+<h2>Useing a <code>panic!</code> Backtrace</h2>
+<p>Here is an example where a <code>panic!</code> call comes from a library because of a bug in our code. Listing
+2 attempts to access an invalid element in a vector:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">vec!</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">v</span><span class="p">[</span><span class="mi">99</span><span class="p">];</span><span class="w"> </span><span class="c1">// panics here</span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 2: Attempting to access the 100th element of a vector with only 3 elements.
+</p>
+
+<p>Obviously Rust will panic at the code above, because there's no element at index 99 in the Vector,
+<code>v</code>. The error messages are very verbose making debugging this specific issue very straightforward.</p>
+<p>In programming languages like C, there are no compiler checks or panics to make sure we don't access
+memory outside of the vector. Because of this, there can vulnerability issues in C programs where
+the program can access and manipulate data stored outside of the program.</p>
+<p>We can actually look at the backtrace to determine what exactly our code did here. A backtrace is a
+list of all the functions that were called leading up to the error. To look at the backtrace, we can
+run our program with <code>RUST_BACKTRACE=1 cargo run</code>.</p>
+<div class="codehilite"><pre><span></span><code>thread <span class="s1">&#39;main&#39;</span> panicked at <span class="s1">&#39;index out of bounds: the len is 3 but the index is 99&#39;</span>, src/main.rs:9:5
+stack backtrace:
+   <span class="m">0</span>: rust_begin_unwind
+             at /rustc/59eed8a2aac0230a8b53e89d4e99d55912ba6b35/library/std/src/panicking.rs:517:5
+   <span class="m">1</span>: core::panicking::panic_fmt
+             at /rustc/59eed8a2aac0230a8b53e89d4e99d55912ba6b35/library/core/src/panicking.rs:101:14
+   <span class="m">2</span>: core::panicking::panic_bounds_check
+             at /rustc/59eed8a2aac0230a8b53e89d4e99d55912ba6b35/library/core/src/panicking.rs:77:5
+   <span class="m">3</span>: &lt;usize as core::slice::index::SliceIndex&lt;<span class="o">[</span>T<span class="o">]</span>&gt;&gt;::index
+             at /rustc/59eed8a2aac0230a8b53e89d4e99d55912ba6b35/library/core/src/slice/index.rs:184:10
+   <span class="m">4</span>: core::slice::index::&lt;impl core::ops::index::Index&lt;I&gt; <span class="k">for</span> <span class="o">[</span>T<span class="o">]</span>&gt;::index
+             at /rustc/59eed8a2aac0230a8b53e89d4e99d55912ba6b35/library/core/src/slice/index.rs:15:9
+   <span class="m">5</span>: &lt;alloc::vec::Vec&lt;T,A&gt; as core::ops::index::Index&lt;I&gt;&gt;::index
+             at /rustc/59eed8a2aac0230a8b53e89d4e99d55912ba6b35/library/alloc/src/vec/mod.rs:2465:9
+   <span class="m">6</span>: ch09_1_panic::main
+             at ./src/main.rs:9:5
+   <span class="m">7</span>: core::ops::function::FnOnce::call_once
+             at /rustc/59eed8a2aac0230a8b53e89d4e99d55912ba6b35/library/core/src/ops/function.rs:227:5
+note: Some details are omitted, run with <span class="sb">`</span><span class="nv">RUST_BACKTRACE</span><span class="o">=</span>full<span class="sb">`</span> <span class="k">for</span> a verbose backtrace.
+</code></pre></div>
+
+<p>Backtraces can only be shown when debug symbols are enabled, which happens by default in debug
+builds.</p>
+<p><a href="9-2.html">Next Section (9.2)</a></p>
+    </body>
+</html>
+
+

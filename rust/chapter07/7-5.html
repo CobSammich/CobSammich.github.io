@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>7-5</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 7 Index</a></p>
+<h1>Separating Modules Into Different Files</h1>
+<p>To take our previous example and move the modules into separate files, we would put them in the
+following tree structure seen before:</p>
+<div class="codehilite"><pre><span></span><code>crate
+ └── src/lib.rs
+     ├── src/front_of_house.rs
+     │   ├── src/front_of_house/hosting.rs
+     │   │   ├── take_order<span class="o">()</span>
+     │   │   ├── add_to_waitlist<span class="o">()</span>
+     │   │   └── seat_at_table<span class="o">()</span>
+     │   └── src/front_of_house/serving.rs
+     │       ├── take_order<span class="o">()</span>
+     │       ├── serve_order<span class="o">()</span>
+     │       └── take_payment<span class="o">()</span>
+     └── src/back_of_house.rs
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 1: File and directory structure of project after moving code to different files.
+</p>
+
+<p>The file <code>src/lib.rs</code> would then just call in the modules <code>front_of_house</code> and <code>back_of_house</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="p">;</span><span class="w"></span>
+<span class="k">mod</span> <span class="nn">back_of_house</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="k">crate</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 2: `src/lib.rs` declaring the two submodules front and back of house within it.
+</p>
+
+<p>Then to move the <code>front_of_house</code> module into it's own file and directory, we would define the file
+<code>src/front_of_house.rs</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">hosting</span><span class="p">;</span><span class="w"></span>
+<span class="c1">// other submodules could be defined here.</span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 3: `src/front_of_house.rs` declaring the submodule `hosting`.
+</p>
+
+<p>Then the module <code>hosting</code> would be defined in the file <code>src/front_of_house/hosting.rs</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">take_order</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">seat_at_table</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+</code></pre></div>
+
+<p class="Center" align="Center">
+Listing 4: `src/front_of_house/hosting.rs` defines the functions used within the `hosting` module.
+</p>
+
+<p>Likewise, the <code>back_of_house</code> module would be defined in it's own file.</p>
+<h2>Summary</h2>
+<p>Rust lets you split a package into multiple crates and a crate into modules so you can refer to
+items defined in one module from another module. You can do this by specifying absolute or relative
+paths. These paths can be brought into scope with a <code>use</code> statement so you can use a shorter path for
+multiple uses of the item in that scope. Module code is private by default, but you can make
+definitions public by adding the <code>pub</code> keyword.</p>
+<ul>
+<li><a href="../chapter08/index.html">Next Chapter</a></li>
+</ul>
+    </body>
+</html>
+
+

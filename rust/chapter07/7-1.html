@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>7-1</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="index.html">Return to Chapter 7 Index</a></p>
+<h1>Packages and Crates</h1>
+<p>A crate is a binary or library. The <em>crate</em> root is a source file that the Rust compiler starts from
+and makes up the root module of your crate. A <em>package</em> is one or more crates that provide a set of
+functionality. A package contains a <code>cargo.toml</code> file that describes how to build those crates.</p>
+<p>There are some rules that determine what a package can contain. A package can contain at most one
+library. It can contain as many binary crates as you'd library, but it must contain at least one
+crate.</p>
+<p>To make a new package, we enter the command <code>cargo new packagename</code>. Cargo follows a convention that
+<code>src/main.rs</code> is the crate root of a binary crate. Cargo also knows that if the package directory
+contains <code>src/lib.rs</code>, the package contains a library crate with the same name as the package and
+<code>src/lib.rs</code> is the crate root. Cargo passes the crate root files to <code>rustc</code> to build the library or
+binary.</p>
+<p>If a package only contains <code>src/main.rs</code>, then it only contains a binary crate. If a package
+contains <code>src/main.rs</code> and <code>src/lib.rs</code>, then it has two crates: A library and a binary, both with
+the same name as the package. A package can have multiple binary crates by placing files in
+<code>src/bin</code>. Each file will be a separate binary crate.</p>
+<p>Moving forward we talk about the module system.</p>
+<p><a href="7-2.html">Go to next section (7.2)</a></p>
+    </body>
+</html>
+
+

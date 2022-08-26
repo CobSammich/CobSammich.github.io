@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-07-18" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>index</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../../index.html">Back to Homepage</a></p>
+<h1><a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a></h1>
+<p><img class="center" src="/home/cob/Coding/game_of_life/life.gif" width="100%"></p>
+<p style="text-align:center">
+Figure 1. Example of a random 100x100 board configuration.
+</p>
+
+<h2>Resources</h2>
+<p>There is a <a href="https://conwaylife.com/wiki/">game of life wiki</a> that has a lot of information regarding
+the Game of Life including things like how to build certain types of "life".</p>
+<h2>Three Rules</h2>
+<p>Conway's game of life boils down to following three rules that define how the cells interact with
+their surroundings.</p>
+<ol>
+<li>Any live cell with two or three live neighbours survives.</li>
+<li>Any dead cell with three live neighbours becomes a live cell.</li>
+<li>All other live cells die in the next generation. Similarly, all other dead cells stay dead.</li>
+</ol>
+    </body>
+</html>
+
+

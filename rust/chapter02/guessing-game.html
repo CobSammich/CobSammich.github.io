@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-01-30" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>guessing-game</title>
+        <link rel="stylesheet" href="../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script>
+            MathJax = {
+              tex: {
+                inlineMath: [['$', '$'], ['$$', '$$']]
+              },
+              svg: {
+                fontCache: 'global'
+              }
+            };
+        </script>
+        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../rust-index.html">Return to Rust Index</a></p>
+<h1>Chapter 2: Programming a Guessing Game</h1>
+<p>This chapter we create a simple guessing game within the terminal.</p>
+<h2>Processing a Guess</h2>
+<p>Below is the basic initial implementation for reading user input.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Guess the number!&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Please input your guess.&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">guess</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">io</span>::<span class="n">stdin</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">guess</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Failed to read line&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;You guessed: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">guess</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>The first line brings the <code>io</code> library into scope so it can be used by the program. You can think of
+this as the rust version of an import statement:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Variable Declarations</h3>
+<p>The next line initiates a String object. The <code>let</code> statement is used to create a variable. The <code>mut</code>
+keyword is used to make a variable mutable. By default, variables are immutable in Rust, that is
+they can't be changed. Making our guess String mutable allows it to be changed when the user inputs
+a new guess.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">guess</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">new</span><span class="p">();</span><span class="w"></span>
+</code></pre></div>
+
+<p>The next line calls for an input to the program using the <code>io</code> library. The <code>stdin</code> function returns
+an instance of <code>std::io:Stdin</code> which is a type that represents a handle to the standard input for
+your terminal. We then call the <code>Stdin's</code> method, <code>read_line</code>, that is used to get input from the
+user.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">io</span>::<span class="n">stdin</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="n">read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">guess</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+
+<p>The parameter in <code>read_line</code> is a reference to the <code>guess</code> parameter. Passing this value into the
+function as reference using <code>&amp;</code> allows the function to access the value within <code>guess</code> without
+needing to copy that data to memory just for that method. To allow the function <code>read_line</code> to
+change the value within <code>guess</code>, we also need to make it mutable within that function. Thus we pass
+in a mutable reference to the variable, <code>guess</code>: <code>&amp;mut guess</code>. (<a href="../chapter04/index.html">Chapter 4</a> will
+explain references in more depth.</p>
+<p>The behavior of using the <code>std</code> library is similar to how it is in C++. We can use the <code>std</code>
+namespace, but it's not necessary as we can also just call the <code>io::stdin()</code> function in the two
+ways below:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// These two are equivalent</span>
+<span class="c1">// (1)</span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span><span class="p">;</span><span class="w"></span>
+<span class="n">io</span>::<span class="n">stdin</span><span class="p">()</span><span class="w"></span>
+<span class="c1">// (2)</span>
+<span class="n">std</span>::<span class="n">io</span>::<span class="n">stdin</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Error Handling with <code>Result</code></h3>
+<p>The <code>read_line</code> method returns a value of <code>io::Result</code>. The <code>Result</code> types are enums with the fixed
+types:</p>
+<ul>
+<li><code>Ok</code> - The operation was succesfull and <code>Ok</code> contains succesfully generated value.</li>
+<li><code>Err</code> - The operation failed and <code>Err</code> contains information about how or why the operation failed.</li>
+</ul>
+<p>If the value of <code>io::Result</code> is an <code>Err</code>, then the program will crash and print the error message
+that caused it to crash. We can chose to not handle the <code>Result</code> with the <code>expect</code> method, but then
+we will get warnings that we are not handling errors correctly:</p>
+<div class="codehilite"><pre><span></span><code>$ cargo build
+   Compiling guessing_game v0.1.0 <span class="o">(</span>file:///projects/guessing_game<span class="o">)</span>
+warning: unused <span class="sb">`</span>Result<span class="sb">`</span> that must be used
+  --&gt; src/main.rs:10:5
+   <span class="p">|</span>
+<span class="m">10</span> <span class="p">|</span>     io::stdin<span class="o">()</span>.read_line<span class="o">(</span><span class="p">&amp;</span>mut guess<span class="o">)</span><span class="p">;</span>
+   <span class="p">|</span>     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   <span class="p">|</span>
+   <span class="o">=</span> note: <span class="sb">`</span><span class="c1">#[warn(unused_must_use)]` on by default</span>
+   <span class="o">=</span> note: this <span class="sb">`</span>Result<span class="sb">`</span> may be an <span class="sb">`</span>Err<span class="sb">`</span> variant, which should be handled
+
+warning: <span class="m">1</span> warning emitted
+
+    Finished dev <span class="o">[</span>unoptimized + debuginfo<span class="o">]</span> target<span class="o">(</span>s<span class="o">)</span> <span class="k">in</span> <span class="m">0</span>.59s
+</code></pre></div>
+
+<h3>Formatted Printing with <code>println!</code> Placeholders</h3>
+<p>Similar to most programming languages, you can include variable information in print statements
+using a Python f-string like print statement using empty <code>{}</code>'s. An example of printing variable's
+values is presented below:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span><span class="w"></span>
+<span class="kd">let</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">9</span><span class="p">;</span><span class="w"></span>
+<span class="fm">println!</span><span class="p">(</span><span class="s">&quot;x = {} and y = {}... nice.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>The code above would print <code>x = 6 and y = 9.. nice.</code>.</p>
+<h2>Generating a Secret Number</h2>
+<p>Now we will write the code to generate the random number that the player needs to guess. To do this,
+we need to use the <code>rand</code> "Crate" for generating random numbers.</p>
+<p>We first need to add the <code>rand</code> crate as a project dependency inside Cargo.toml.:</p>
+<div class="codehilite"><pre><span></span><code><span class="o">[</span>dependencies<span class="o">]</span>
+<span class="nv">rand</span> <span class="o">=</span> <span class="s2">&quot;0.8.3&quot;</span>
+</code></pre></div>
+
+<p>Upon typing <code>cargo build</code> within the project directory, we installed the <code>rand</code> crate from the
+internet. This command also updated the <code>Cargo.lock</code> file that can be used for reproducibility with
+specific crate versions. You can update your project crates by typing <code>cargo update</code>. Doing this at
+time of writing updated from 0.8.3 to 0.8.4. In order to update to 0.9.x, you would need to change
+your Cargo.toml dependency to be "0.9.0".</p>
+<blockquote>
+<p>Note that there could be security issues when downloading packages from the internet.</p>
+</blockquote>
+<p>To include the random number generator within our project, we include the following line to import
+the <code>rand</code> crate functionality:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">rand</span>::<span class="n">Rng</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>And to generate a random number, we include this line in <code>main()</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">secret_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rand</span>::<span class="n">thread_rng</span><span class="p">().</span><span class="n">gen_range</span><span class="p">(</span><span class="mi">1</span><span class="o">..</span><span class="mi">101</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>We create the random number generator that is local to the current thread of execution and is seeded
+by the operating system using the <code>rand::thread_rng()</code> call. Then we generate the random number
+using the <code>gen_range</code> function from the random number generator. This function takes a "range"
+expression as a parameter. Ranges in rust are defined in the syntax <code>start..end</code>. Ranges are
+inclusive on the lower bound and exclusive on the upper bound. So, this function will generate a
+number between 1 and 100 (inclusive).</p>
+<p>You can also define ranges where the upper bound is inclusive: 1..=100.</p>
+<h2>Comparing the Guess to the Secret Number</h2>
+<p>We bring another type called <code>std::cmp::Ordering</code> into scope in the line below. <code>Ordering</code> is
+another enum that has the following variants: <code>Less</code>, <code>Greater</code>, and <code>Equal</code>. These are the 3
+possible outcomes for when you compare two values.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">cmp</span>::<span class="n">Ordering</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+
+<p>The below 5 lines are added to the end of the program that use the Ordering enum. The <code>cmp</code> method
+compares two values and can be called on any value that can be compared. In our case, we are
+comparing the players guess to the secret number.</p>
+<p>The <code>match</code> statement used here checks each of it's "arms" within the brackets. When the statement
+finds an arm that matches the state of the <code>cmp</code> call, it will end the match statement and execute
+the piece of code on the right of that arm's <code>=&gt;</code>.</p>
+<p>If we try to compile and run this code, we will notice we get the following error:</p>
+<div class="codehilite"><pre><span></span><code>rror<span class="o">[</span>E0308<span class="o">]</span>: mismatched types
+  --&gt; src/main.rs:22:21
+   <span class="p">|</span>
+<span class="m">22</span> <span class="p">|</span>     match guess.cmp<span class="o">(</span><span class="p">&amp;</span>secret_number<span class="o">)</span> <span class="o">{</span>
+   <span class="p">|</span>                     ^^^^^^^^^^^^^^ expected struct <span class="sb">`</span>String<span class="sb">`</span>, found integer
+   <span class="p">|</span>
+   <span class="o">=</span> note: expected reference <span class="sb">`</span><span class="p">&amp;</span>String<span class="sb">`</span>
+              found reference <span class="sb">`</span><span class="p">&amp;</span><span class="o">{</span>integer<span class="o">}</span><span class="sb">`</span>
+</code></pre></div>
+
+<p>This happened because we are trying to compare a string to an integer because <code>guess</code> is a String
+and <code>secret_number</code> is an integer. To fix this, we want to convert the String to an integer.</p>
+<p>Rust allows for several integer types -- in this chapter, they have introduced the following types:</p>
+<ul>
+<li>i32 -- a 32 bit integer.</li>
+<li>i64 -- a 64 bit integer.</li>
+<li>u32 -- a 32 bit unsigned integer.</li>
+</ul>
+<p>Rust defaults to <code>i32</code>, which is the type of <code>secret_number</code>.</p>
+<p>To convert the <code>guess</code> variable to an integer, we use the following line:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">guess</span>: <span class="kt">u32</span>  <span class="o">=</span><span class="w"> </span><span class="n">guess</span><span class="p">.</span><span class="n">trim</span><span class="p">().</span><span class="n">parse</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Please type a number!&quot;</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+
+<p>We can reuse the <code>guess</code> variable in this case by "shadowing" the previously defined variable with
+the same name. Shadowing in Rust is mainly used for just this; changing the type of a variable.</p>
+<p>The methods used within that line have the following functionality:</p>
+<ul>
+<li><code>trim</code> -- removes all whitespace at the beginning and end of a string.</li>
+<li><code>parse</code> -- parses a string into some type of number. We tell the function to use <code>u32</code> at the
+  beginning of the line.</li>
+</ul>
+<p>The call to <code>parse</code> could cause a potential failure if the input given is a letter, so we once again
+use the <code>expect</code> function to handle errors.</p>
+<h2>Allowing Multiple Guesses with Looping</h2>
+<p>We can use the <code>loop</code> keyword to infinitely loop through the player input and compare to the random
+number.</p>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="c1">// --snip--</span>
+
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;The secret number is: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">secret_number</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">loop</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Please input your guess.&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// --snip--</span>
+
+<span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">guess</span><span class="p">.</span><span class="n">cmp</span><span class="p">(</span><span class="o">&amp;</span><span class="n">secret_number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">Ordering</span>::<span class="n">Less</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Too small!&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">            </span><span class="n">Ordering</span>::<span class="n">Greater</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Too big!&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">            </span><span class="n">Ordering</span>::<span class="n">Equal</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;You win!&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Quitting After a Correct Guess</h2>
+<p>We can make <code>match</code> arms execute multiple lines of code by enclosing a sequence in brackets. To make
+the program automatically stop when the player wins, we use a <code>break</code> statement inside the
+<code>Ordering::Equal</code> arm:</p>
+<div class="codehilite"><pre><span></span><code><span class="w">     </span><span class="c1">// --snip--</span>
+
+<span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">guess</span><span class="p">.</span><span class="n">cmp</span><span class="p">(</span><span class="o">&amp;</span><span class="n">secret_number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">Ordering</span>::<span class="n">Less</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Too small!&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">            </span><span class="n">Ordering</span>::<span class="n">Greater</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Too big!&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">            </span><span class="n">Ordering</span>::<span class="n">Equal</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;You win!&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Handling Invalid Input</h2>
+<p>We can switch the <code>expect</code> call to a match expression on the conversion from string to int. <code>parse</code>
+returns a <code>Result</code>, meaning it contains the enums <code>Ok</code> and <code>Err</code>, which we can use to match our
+result output and execute other lines of code within the string to int conversion.</p>
+<p>The following code accomplishes handling invalid input. If <code>parse</code> is not able to turn the string
+into a number, it will return an <code>Err</code>, which we can use as an arm and within the match expression.
+I warn the player that the input must be a number, and use the <code>continue</code> keyword which tells the
+program to go to the next iteration of the loop and ask for another guess.</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="n">guess</span>: <span class="kt">u32</span> <span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">guess</span><span class="p">.</span><span class="n">trim</span><span class="p">().</span><span class="n">parse</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nb">Ok</span><span class="p">(</span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">num</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nb">Err</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;Warning: Input must be a number.&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">                </span><span class="k">continue</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">};</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Summary</h2>
+<p>This chapter introduces us to the following concepts in rust:</p>
+<ul>
+<li><code>let</code> statements for variable creation.</li>
+<li><code>mut</code> keywords for making variables mutable.</li>
+<li><code>Result</code> types and enums.</li>
+<li>Importing "crates" and using external crates.</li>
+<li>Handling user input.</li>
+<li>Type conversion.</li>
+<li><code>match</code> statements and arms.</li>
+<li><code>loops</code>.</li>
+<li><code>expect</code> method.</li>
+</ul>
+<p><a href="../chapter03/index.html">Next Chapter</a></p>
+    </body>
+</html>
+
+
