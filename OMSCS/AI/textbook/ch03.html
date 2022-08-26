@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-08-24" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-08-25" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>ch03</title>
         <link rel="stylesheet" href="../../../style.css" type="text/css"
@@ -62,8 +62,8 @@ road system were to arrive at a road with a "Road Closed" sign.</p>
 $$
 Actions(s) = \set{a_1, a_2, a_3, \dots}
 $$</li>
-<li>A <strong>transition model</strong>, which describes what each action does. $$Result(s, a)$$ returns the new
-  state, $$s'$$, that results from doing action $a$ in state $s$.
+<li>A <strong>transition model</strong>, which describes what each action does. $Result(s, a)$ returns the new
+  state, $s'$, that results from doing action $a$ in state $s$.
 $$
 Result(s, a) = s'
 $$</li>
@@ -82,7 +82,7 @@ $$</li>
 <p>The state space is represented as a
 <a href="https://en.wikipedia.org/wiki/Graph_(abstract_data_type)"><strong>graph</strong></a> in which the vertices are
 states and the directed edges between them are actions.</p>
-<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/romania_graph.png" /></p>
+<p><img alt="" src="./images/romania_graph.png" /></p>
 <p style="text-align:center">
 Figure 1. A road map of Romania represented as a graph. The towns are nodes, while the roads and
 numbers associated are edges and their corresponding traversal costs.
@@ -149,7 +149,7 @@ as <strong>child nodes</strong>. Any node that has not yet been expanded is know
 state space and search tree. Figure 2 shows the example of the first few actions performed on the
 graph in Figure 1. Lavender nodes are nodes that have been expanded and teal nodes are nodes that
 represent the frontier.</p>
-<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/search_tree1.png" /></p>
+<p><img alt="" src="./images/search_tree1.png" /></p>
 <p style="text-align:center">
 Figure 2. A partial search tree for finding a route from Arad to Bucharest in the graph shown in
 figure 1. This shows how the tree looks after we perform the first few actions. The lavender nodes
@@ -175,7 +175,7 @@ expand next? A basic approach is known as <strong>best-first search</strong>.</p
   frontier if it is being reached with a path that has a lower path cost than any previous path.</li>
 </ul>
 <p>Here is pseudocode for the best-first search algorithm:</p>
-<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/best-first-search_pseudocode.png" /></p>
+<p><img alt="" src="./images/best-first-search_pseudocode.png" /></p>
 <p style="text-align:center">
 Figure 3. The best-first search algorithm and the function for expanding a node.
 </p>
@@ -288,7 +288,7 @@ with and a search at depth $d=10$ would take ~3 hours, but would require 10 tera
 smallest instances.</p>
 </blockquote>
 <p>Here is pseudocode that implements the breadth-first search algorithm:</p>
-<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/breadth-first-search.png" /></p>
+<p><img alt="" src="./images/breadth-first-search.png" /></p>
 <p style="text-align:center">
 Figure 4. The breadth-first search algorithm.
 </p>
@@ -299,7 +299,7 @@ is the cost of the path from the root to the current node. This is known as Dijk
 <strong>uniform-cost search</strong>, and, in the lectures, <strong>Cheapest-first search</strong>. The algorithm can be
 implemented in a call to <code>Best-First-Search</code> with <code>Path_Cost</code> as the evaluation function, $f$ like
 so:</p>
-<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/uniform-cost-search.png" /></p>
+<p><img alt="" src="./images/uniform-cost-search.png" /></p>
 <p style="text-align:center">
 Figure 5. The uniform-cost search algorithm.
 </p>
@@ -364,7 +364,7 @@ cost of time.</p>
 <p>In general iterative deepening is the preferred uninformed search method when the search state
 space is larger than can fit in memory and the depth of the solution is not known.</p>
 </blockquote>
-<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/iterative-deepening-search_pseudocode.png" /></p>
+<p><img alt="" src="./images/iterative-deepening-search_pseudocode.png" /></p>
 <p style="text-align:center">
 Figure 6. Pseudocode for iterative deepening search.
 </p>
@@ -373,7 +373,7 @@ Figure 6. Pseudocode for iterative deepening search.
 <p>Bidirectional state simultaneously searches forward from the initial state and backward from the
 goal state(s) with the goal of having both searches meet. The idea here is that $b^{d/2} + b^{d/2}$
 is much faster than $b^d$</p>
-<p><img alt="" src="/home/cob/Documents/OMSCS/AI/course_material/wiki_images/bidirectional-search_pseudocode.png" /></p>
+<p><img alt="" src="./images/bidirectional-search_pseudocode.png" /></p>
 <p style="text-align:center">
 Figure 7. Pseudocode for Best-First Bidirectional Search.
 </p>

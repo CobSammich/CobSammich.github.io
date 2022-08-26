@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-03-07" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-08-25" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>5-2</title>
         <link rel="stylesheet" href="../../style.css" type="text/css"
@@ -12,17 +12,10 @@
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
     </head>
     <body>
-        <script>
-            MathJax = {
-              tex: {
-                inlineMath: [['$', '$'], ['$$', '$$']]
-              },
-              svg: {
-                fontCache: 'global'
-              }
-            };
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
         </script>
-        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
         <script type="text/javascript">
             document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));

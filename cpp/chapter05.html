@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-04-03" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-08-26" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>chapter05</title>
         <link rel="stylesheet" href="../style.css" type="text/css"
@@ -12,17 +12,10 @@
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
     </head>
     <body>
-        <script>
-            MathJax = {
-              tex: {
-                inlineMath: [['$', '$'], ['$$', '$$']]
-              },
-              svg: {
-                fontCache: 'global'
-              }
-            };
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
         </script>
-        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
         <script type="text/javascript">
             document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
@@ -187,7 +180,7 @@ ending in the null character can be treated as C-style strnigs.</p>
 
 <p>Because the name does not take up all 10 list positions, the other two characters are initialized as
 the null character:</p>
-<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch05/images/string_literal.png" /></p>
+<p><img alt="" src="./images/string_literal.png" /></p>
 <p>You can initialize an array from a string literal without a size given. This will append the null
 character to the end of it. So for the example:</p>
 <div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="w"> </span><span class="n">vowels</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;aeiou&quot;</span><span class="p">};</span><span class="w"></span>
@@ -200,7 +193,7 @@ character to the end of it. So for the example:</p>
 </code></pre></div>
 
 <p>The array stores the values contiguously in memory by row-column order as seen by figure 5-2.
-<img alt="" src="/home/cob/Coding/study_groups/c++17/ch05/images/2D_array_memory.png" /></p>
+<img alt="" src="./images/2D_array_memory.png" /></p>
 <p>To initialize the values within a multidimensional array, you can use the following statement:</p>
 <div class="codehilite"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">carrots</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">                       </span><span class="p">{</span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="mf">3.2</span><span class="p">,</span><span class="w"> </span><span class="mf">3.7</span><span class="p">,</span><span class="w"> </span><span class="mf">4.1</span><span class="p">},</span><span class="w">   </span><span class="c1">// First row</span>

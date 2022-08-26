@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-03-31" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-08-25" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>chapter02</title>
         <link rel="stylesheet" href="../style.css" type="text/css"
@@ -12,17 +12,10 @@
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
     </head>
     <body>
-        <script>
-            MathJax = {
-              tex: {
-                inlineMath: [['$', '$'], ['$$', '$$']]
-              },
-              svg: {
-                fontCache: 'global'
-              }
-            };
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
         </script>
-        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
         <script type="text/javascript">
             document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
@@ -74,7 +67,7 @@ it's own line as it is considered more readable.</p>
 <p>Table 2-1 shows the value ranges for the different types of signed integers. Specifying a variable
 as <code>signed</code> is redundant in most cases as the value will always be signed unless specified as
 <code>unsigned</code>. The one exception to this is <code>char</code>, which by default is unsigned in the range 0 to 255.</p>
-<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/signed_integer_types.png" /></p>
+<p><img alt="" src="./images/signed_integer_types.png" /></p>
 <p style="text-align:center">
 Table 2-1: Signed Integer Types.
 </p>
@@ -115,7 +108,7 @@ string literals.</p>
 <h3>Hexadecimal Literals</h3>
 <p>You can write integer literals as Hexadecimal values. A hexadecimal literal is prefixed with a <code>0x</code></p>
 <p>Here are some examples of hexadecimal literals with their decimal values:</p>
-<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/hexadecimal_literals.png" /></p>
+<p><img alt="" src="./images/hexadecimal_literals.png" /></p>
 <p style="text-align:center">
 Table 2-2: Hexadecimal literal values.
 </p>
@@ -128,7 +121,7 @@ would be defined as <code>0xff0000</code>.</p>
 <h3>Octal Literals</h3>
 <p>You can also write literals as octal values -- that is, using base 8 instead of hexadecimal which
 uses base 16. An octal is prefixed by a leading 0.</p>
-<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/octal_literals.png" /></p>
+<p><img alt="" src="./images/octal_literals.png" /></p>
 <p style="text-align:center">
 Table 2-3: Octal literal values.
 </p>
@@ -140,7 +133,7 @@ $$
 $$</p>
 <h3>Binary Literals</h3>
 <p>Binary literals are prefixed by <code>0b</code> or <code>0B</code>. Here are some examples of binary literals:</p>
-<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/binary_literals.png" /></p>
+<p><img alt="" src="./images/binary_literals.png" /></p>
 <p style="text-align:center">
 Table 2-4: Binary literal values.
 </p>
@@ -162,12 +155,12 @@ variable, a type, and the result of an operation.</p>
 
 <h2>Formatting Stream Output</h2>
 <p>We can manipulate how values are displayed to us when printing to stdout.</p>
-<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/stream_manipulators1.png" /></p>
+<p><img alt="" src="./images/stream_manipulators1.png" /></p>
 <p style="text-align:center">
 Table 2-5: manipulators in `iostream`.
 </p>
 
-<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch02/images/stream_manipulators2.png" /></p>
+<p><img alt="" src="./images/stream_manipulators2.png" /></p>
 <p style="text-align:center">
 Table 2-6: manipulators in `iomanip`.
 </p>

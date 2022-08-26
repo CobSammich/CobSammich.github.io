@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-05-12" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-08-25" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>chapter06</title>
         <link rel="stylesheet" href="../style.css" type="text/css"
@@ -12,17 +12,10 @@
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
     </head>
     <body>
-        <script>
-            MathJax = {
-              tex: {
-                inlineMath: [['$', '$'], ['$$', '$$']]
-              },
-              svg: {
-                fontCache: 'global'
-              }
-            };
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
         </script>
-        <script type="text/javascript" src="/home/cob/git_repos/MathJax/es5/tex-chtml.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
         <script type="text/javascript">
             document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
@@ -103,7 +96,7 @@ to accomplish this:</p>
 </code></pre></div>
 
 <p>The figure below shows graphically how these <code>char*</code>'s are stored.</p>
-<p><img alt="" src="/home/cob/Coding/study_groups/c++17/ch06/images/array_of_pointers.png" /></p>
+<p><img alt="" src="./images/array_of_pointers.png" /></p>
 <h2>Constant Pointers and Pointers to Constants</h2>
 <p>We've already learned that because these strings are of type <code>const char*</code> that we cannot modify the
 contents of them like so:</p>
