@@ -1,5 +1,5 @@
-body {font-family: Tahoma, Geneva, sans-serif; margin: 1em 2em 1em 2em; font-size: 100%; line-height: 130%;max-width:50rem;margin:auto;background:#BEBEBE;color:#111111;padding-bottom:10rem;}
-h1, h2, h3, h4, h5, h6 {font-family: Trebuchet MS, Helvetica, sans-serif; font-weight: bold; line-height:100%; margin-top: 1.5em; margin-bottom: 0.5em;}
+body {font-family: Tahoma, Geneva, sans-serif; margin: 1em 2em 1em 2em; font-size: 100%; line-height: 130%;max-width:50rem;margin:auto;background:#BEBEBE;color:#111111;padding-bottom:10rem; text-align: center;}
+h1, h2, h3, h4, h5, h6 {font-family: Trebuchet MS, Helvetica, sans-serif; font-weight: bold; line-height:100%; margin-top: 1.5em; margin-bottom: 0.5em; text-align: center;}
 h1 {font-size: 2.6em; color: #333333; text-decoration: underline;}
 h2 {font-size: 2.2em; color: #333333;}
 h3 {font-size: 1.8em; color: #333333;}
@@ -74,7 +74,7 @@ del {text-decoration: line-through; color: #777777;}
 }
 
 code {
-    font-family: "Bitstream Vera Sans Mono";
+    font-family: "Bitstream Vera Sans Mono", Monaco, "Courier New";
     /*font-family: Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono", "Space Nerd Font";*/
     -webkit-border-radius: 1px;
     -moz-border-radius: 1px;
