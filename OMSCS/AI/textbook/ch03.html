@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-08-27" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-08-29" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>ch03</title>
         <link rel="stylesheet" href="../../../style.css" type="text/css"
@@ -444,6 +444,14 @@ Table 1. Evaluation of search algorithms. Where $b$ is the branching factor, $m$
 the search tree, $d$ is the depth of the shallowest solution.
 </p>
 
+<p>Here is a simple comparison of the Breadth-First, Uniform-Cost, and Depth-First search algorithms
+showing how each one would traverse the nodes of the tree.</p>
+<p><img alt="" src="./images/ch03_search_comparison.png" /></p>
+<p style="text-align:center">
+Figure 8. Comparison of traversing a tree using Breadth-First search, Uniform-Cost search, and
+Depth-First search.
+</p>
+
 <h2>3.5 Informed (Heuristic) Search Strategies</h2>
 <p>Informed search strategies use "domain-specific" hints about the location of goals, and thus find
 solutions more efficiently than uninformed search strategies. The "hints" are called <strong>heuristic
@@ -492,7 +500,7 @@ This stems from the <strong>triangle inequality</strong> (a side of a triangle c
 the other two sides.)</p>
 <p><img alt="" src="./images/ch03_triangle_inequality.png" /></p>
 <p style="text-align:center">
-Figure 8. Triangle inequality: If the heuristic h is consistent, then the single number h(n)
+Figure 9. Triangle inequality: If the heuristic h is consistent, then the single number h(n)
 will be less than the sum of the cost c(n,a,a′) of the action from n to n′ plus the heuristic
 estimate h(n′).
 </p>
