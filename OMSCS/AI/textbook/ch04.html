@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-09-11" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>ch04</title>
+        <link rel="stylesheet" href="../../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../index.html">Back to AI Homepage</a></p>
+<h1>Chapter 4 - Search in Complex Environments</h1>
+<p>This section deals with the problems of finding a good state without worrying about the path to get
+there. It covers the following topics:</p>
+<ul>
+<li>Discrete states (4.1)</li>
+<li>Continuous states (4.2)</li>
+<li>Actions in a nondeterministic world (4.3)</li>
+<li>Partial observability of agents (4.4)</li>
+<li>Online search - learning as it goes (4.5)</li>
+</ul>
+<h2>4.1 Local Search and Optimization Problems</h2>
+<p>Conversely to Chapter 3, this section will be focusing on the final state in a problem instead of
+the path to get there.</p>
+<p><strong>Local search</strong> looks at a start state and its neighboring states without keeping track of paths
+and the set of reached states. They are not systematic, meaning they may never explore a region of
+the space that contains the solution. Local search however offers 2 advantages:</p>
+<ol>
+<li>Uses little memory</li>
+<li>Can find a reasonable solution in large or infinite spaces, where systematic solutions may be
+   unstable.</li>
+</ol>
+<p>Local search algorithms can also solve <strong>optimization problems</strong>, in which they attempt to find a
+best state according to some objective function. <strong>This is similar to minimizing a loss function in
+machine learning.</strong></p>
+<p><img alt="" src="./images/ch04_state_space_landscape.png" /></p>
+<p style="text-align:center">
+Figure 1. An example 1 dimensional state-space.
+</p>
+
+<p>Consider Figure 1 above. The x-axis represents some possible states in continuous space while the
+y-axis represents the objective function value at that state. The goal of local search here can be
+one of two things:</p>
+<ol>
+<li><strong>Hill Climbing</strong> - Maximize the evaluation function by finding the highest peak (global Maximum)</li>
+<li><strong>Gradient Descent</strong> - Minimize the cost function by finding the lowest valley (global minimum)</li>
+</ol>
+<p>Here is pseudocode for implementing basic hill climbing local search. Evaluate the neighbors of the
+current state until the current state has the maximum of the evaluation function compared to all
+neighbors.</p>
+<p><img alt="" src="./images/ch04_hill_climbing_pseudocode.png" /></p>
+<p style="text-align:center">
+Figure 2. Pseudocode for the simple hill-climbing algorithm.
+</p>
+
+<h3>4.1.1 Hill-Climbing Search</h3>
+<p>Figure 2 above shows the Hill-Climbing algorithm. The algorithm terminates when it reaches a peak where
+no neighbors have a higher value. It <em>does not</em> look ahead beyond the immediate neighbors of the
+current state.</p>
+<p>Hill climbing is sometimes called <strong>greedy local search</strong> because it moves to a neighbor state
+without thinking ahead of where to go next. Greedy algorithms often perform well, but they can get
+stuck for any of the following reasons:</p>
+<ul>
+<li><strong>Local Maxima</strong> - a state that has a higher value of the evaluation function than its neighbors,
+  but is not the global maxima.</li>
+<li><strong>Ridges</strong> - When local maximas in a 2+ dimensional problem are not connected but are next to each
+  other. From each local maxima, the neighbors are less than them, so they get stuck on the ridge.
+  Figure 3 shows an example of this.
+<img alt="" src="./images/ch04_ridge_illustration.png" /></li>
+</ul>
+<p style="text-align:center">
+Figure 3. Illustration of the ridge problem.
+</p>
+<ul>
+<li><strong>Plateaus</strong> - A flat area that has neighbors with the same evaluation function value. These can
+  be a flat local maxima or a <strong>shoulder</strong> of a greater local maxima (see figure 1).</li>
+</ul>
+<p>The book suggests that to solve more problems, we can allow the local search to keep going when we
+reach a plateau in the hope that the plateau is really a shoulder. However, if we truly are on a
+flat local maxima, then we can limit the number of consecutive sideways moves to $100$ for example.</p>
+<p>There are several variants of hill climbing:</p>
+<ul>
+<li><strong>Stochastic Hill Climbing</strong> - Chooses at random from the neighboring uphill moves. This typically
+  converges slower than steepest ascent, but can find better solutions.</li>
+<li><strong>First-choice Hill Climbing</strong> - Extends off of Stochastic hill climbing by generating successors
+  randomly until one is generated that is better than the current state. This is useful when a state
+  has thousands of neighbors.</li>
+<li><strong>Random-Restart Hill Climbing</strong> - Conducts a series of hill-climbing searches from randomly
+  generated initial states until a goal is found.</li>
+</ul>
+<p>The success of hill climbing is very dependent on the shape of the state-space landscape.</p>
+<h3>4.1.2 Simulated Annealing</h3>
+<p>Hill climbing that never makes downhill moves is vulnerable to getting stuck at local maximas, while
+the purely random walks will find the global max, but will be very inefficient. An algorithm exists
+that attempts to combine both hill climbing and a random walk to yield both efficiency and
+completeness. This algorithm is known as <strong>simulated annealing</strong></p>
+<p>Annealing is the process of heating metals with high temperature and then gradually cooling them.
+To explain simulated annealing, think of a state-space that contains many crevices and our goal is
+to get a ball in the deepest crevice. Instead of a hill climbing problem, this is now a gradient
+descent problem.</p>
+<p>The idea of simulated annealing is to shake this state-space at some starting magnitude and then
+gradually reduce this magnitude. When we shake the state-space enough, we should be dislodging the
+ball out of local minimas and not the global minima.</p>
+<p>Figure 4 below shows the pseudocode for the simulated annealing algorithm.</p>
+<p><img alt="" src="./images/ch04_simulated_annealing_pseudocode.png" /></p>
+<p style="text-align:center">
+Figure 4. Pseudocode for implementing simulated annealing where the task is minimizing the objective
+function.
+</p>
+
+<ul>
+<li>Instead of picking the best move, it picks a random move.</li>
+<li>If the move improves he situation, it is always accepted. Otherwise, the algorithm, accepts the
+  move with some probability less than $1$.</li>
+<li>The probability decreases exponentially with the "badness" of the move -- the amount $\Delta E$
+  by which the evaluation is worsened.</li>
+<li>The probability also decreases as the "temperature" $T$ goes down. Bad moves are more likely to be
+  allowed at the start when $T$ is high, and they become more unlikely as $T$ decreases.</li>
+<li>If the schedule lowers $T$ to $0$ slowly enough, then a property of the Boltzmann distribution,
+  $e^{\Delta E / T}$, is that all the probability is concentrated on the global maxima, which the
+  algorithm will find with probability approaching 1.</li>
+</ul>
+<h3>4.1.3 Local Beam Search</h3>
+<p>Instead of keeping just one node in memory, <strong>Local Beam Search</strong> keeps track of $k$ states rather
+than just one. Beginning with $k$ randomly generated states. At each step, all the successors of all
+$k$ states are generated. If any one is a goal, the algorithm halts. Otherwise,it selects the $k$
+best successors from the complete list and repeats.</p>
+<p>This may seem like random-restart search running in parallel, but instead this algorithm passes
+information over to the other search threads to tell them that their search may be better than the
+current threads search. This allows for "unfruitful" searches to be abandoned and move its search
+over to the area of the state-space that has more progress potential.</p>
+<p>Local beam search can suffer from a lack of diversity when the $k$ states get clustered in a small
+region of the state space. A variant called <strong>stochastic beam search</strong>, which is analogous to
+stochastic hill climbing** can be used to alleviate this problem. Instead of using the top $k$
+successors, stochastic beam search chooses successors with probability proportional to the
+successor's value, thus increasing diversity.</p>
+<h3>4.1.4 Evolutionary Algorithms</h3>
+<p><strong>Evolutionary Algorithms</strong> are variants of stochastic beam search. Motivated by the metaphor of
+natural selection, these algorithms use a population of states, in which the "fittest" (highest
+value) individuals produce offspring (successor states) that populate the next generation of the
+population. This process is called <strong>recombination</strong>.</p>
+<p>The following terms are related to evolutionary algorithms:</p>
+<ul>
+<li>The <strong>Mixing Number</strong>, $\rho$, which is the number of parents that combine to make an offspring.</li>
+<li>The <strong>selection</strong> process for selecting the individuals who will become the parents of the next
+  generation.</li>
+<li>The recombination procedure. A common approach is to select a <strong>crossover point</strong> to split each of
+  the parents genes and recombine the parts to form two children. The first child contains the first
+  part of parent 1 and the second part of parent 2. The second child would then contain the
+  remaining parts of the parents.</li>
+<li>The <strong>mutation rate</strong>, which determines how often offspring have random mutations to their genes.
+  When an offspring is generated, every gene in its composition is flipped with probability equal to
+  the mutation rate.</li>
+</ul>
+<p>Genetic algorithms add to stochastic beam search with the crossover operation. Figure 5 below shows
+the pseudocode for implementing a genetic algorithm.</p>
+<p><img alt="" src="./images/ch04_genetic_alg_pseudocode.png" /></p>
+<p style="text-align:center">
+Figure 5. Pseudocode for implementing a genetic algorithm.
+</p>
+
+<h2>4.2 Local Search in Continuous Space</h2>
+<p>We discuss techniques for local search in continuous spaces in this section. The book uses an
+example where we want to minimize the distance from each city in Romania to the closest of three
+airports. This problem is a six-dimensional problem because there are six coordinates: $(x_1, y_1),
+(x_2, y_2), (x_3, y_3)$. The evaulation function for this problem can then be defined by:</p>
+<p>$$
+f(\textbf{x}) = f(x_1, y_1, x_2, y_2, x_3, y_3) = \sum_{i = 1}^{3} \sum_{c \in C_i} (x_i - x_c)^2 +
+(y_i - y_x)^2
+$$</p>
+<p>In cases of continuous states, it is often a good idea to <strong>discretize</strong> the state space. In this
+example, every time we obtain a new set of cities, we have to recompute the evaluation function each
+state and its infinite successors in the 2D state. Instead of allowing a state to be any combination
+of $(x, y)$ in the continuous two-dimensional space, we could limit them to a rectangular grid with
+spacing of size $\delta$. Then when we compute our evaluation function, instead of computing this
+for the infinite number of successors to a state, a single state only has 12 successors corresponding
+to incrementing one of the 6 variables by $\pm \delta$.</p>
+<p>As an alternative to the grid method, we could make the branching factor finite by only sampling a
+few successor states randomly, moving in a random direction by a small amount, $\delta$. Methods
+that measure the progress by the change in the value of the objective function between two nearby
+points are called <strong>empirical gradient</strong> methods. Empirical gradient search is the same as
+steepest-ascent hill climbing. Reducing $\delta$ over time can give a more accurate solution, but
+does not always converge to a global optimum in the limit.</p>
+<p>In order to use calculus to solve a problem analytically rather than empirically, we can use the
+<strong>gradient</strong> of the landscape to find a maximum. The gradient of the objective function is a vector
+$\nabla f$ that gives the magnitude and direction of the steepest slope. The gradient of our problem
+is</p>
+<p>$$
+\nabla f = \left( \frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial y_1}, \frac{\partial
+f}{\partial x_2}, \frac{\partial f}{\partial y_2}, \frac{\partial f}{\partial x_3}, \frac{\partial
+f}{\partial y_3}, \right)
+$$</p>
+<p>In some cases, we can find a maximum by solving the equation $\nabla f = 0$. However, in most cases
+this equation cannot be solved in closed form.</p>
+<p>We can perform steepest-ascent hill climbing by updating the current state according to the formula</p>
+<p>$$
+\textbf{x} \leftarrow \textbf{x} + \alpha \nabla f(\textbf{x})
+$$
+where $\alpha$ is a small constant representing the <strong>step size</strong>. When $\alpha$ is too small, too
+many steps are needed and it can fall into a less optimal local minima, whereas when $\alpha$ is too
+big, it could overshoot the global minima. <strong>Line Search</strong> tries to fix this dilemma by extending the
+current gradient direction until $f$ begins to decrease again.</p>
+<p>For many problems, an effective algorithm is the <strong>Newton-Raphson</strong> method. This is a technique for
+finding roots of functions (solving equations in the form $g(x) = 0$). It uses newton's formula to
+compute a new estimate for the root $x$:
+$$
+x \leftarrow x - \frac{g(x)}{g'(x)}
+$$</p>
+<p>To find a maximum or minimum of $f$, we need to find $\textbf{x}$ such that the gradient is a zero
+vector $\nabla f(\textbf{x}) = 0$ Thus we can rewrite the above newton's formula as:
+$$
+\textbf{x} \leftarrow \textbf{x} - \textbf{H}_{f}^{-1} (\textbf{x}) \nabla f(\textbf{x})
+$$</p>
+<p>Where $\textbf{H}_f(\textbf{x})$ is the <strong>Hessian</strong> matrix of second derivatives. The elements of
+the Hessian are given by:</p>
+<p>$$
+H_{ij} = \frac{\partial^2 f}{\partial x_i \partial x_j}
+$$</p>
+<p>For high dimensional problems, computing the $n^2$ entries of the Hessian and inverting it is often
+expensive, so there have been approximation methods developed for the Newton-Raphson method.</p>
+<p>Just like discrete spaces, continuous state space searches suffer from local maxima/minima, ridges,
+and plateaus. Random restarts and simulated annealing can often help.</p>
+<h2>4.3 Search with Nondeterministic Actions</h2>
+<!-- 4 Pages -->
+<h2>4.4 Search in Partially Observable Environments</h2>
+<!-- 8 Pages -->
+<h2>4.5 Online Search Agents and Unknown Environments</h2>
+<!-- 7 Pages -->
+
+<p><a href="ch05.html">Chapter 5 Constraint Satisfaction Problems</a></p>
+    </body>
+</html>
+
+

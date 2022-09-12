@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-08-29" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-09-11" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>ch03</title>
         <link rel="stylesheet" href="../../../style.css" type="text/css"
@@ -505,6 +505,16 @@ will be less than the sum of the cost c(n,a,a′) of the action from n to n′ p
 estimate h(n′).
 </p>
 
+<h3>Remaining Sections</h3>
+<p>The book goes on to discuss the following topics that I do not have time to take notes on:</p>
+<ul>
+<li>Search contours - Areas around the node that fall in different categories of the evaluation
+  function.</li>
+<li>Weighted A<em> - Sacrifices optimality for exploration of less nodes using an </em><em>inadmissible
+  heuristic</em>*.</li>
+<li>Bidirectional heuristic search (bidirectional A*).</li>
+<li>Heuristics and precomputation with <strong>landmarks</strong>.</li>
+</ul>
 <h2>Vocab</h2>
 <ul>
 <li><strong>Branching Factor</strong> - the number of successors/children of a node that need to be considered.</li>
@@ -512,7 +522,9 @@ estimate h(n′).
 <li><strong>Cost-Optimal</strong> - Guaranteed to find the solution that requires the lowest cost.</li>
 <li><strong>Diameter</strong> - Represents the max number of actions needed to get from any initial state to any
   other state in the space.</li>
+<li><strong>Admissibility</strong> - A solution that never <em>overestimates</em> the cost to reach a goal.</li>
 </ul>
+<p><a href="ch04.html">Chapter 4 Search in Complex Environments</a></p>
     </body>
 </html>
 
