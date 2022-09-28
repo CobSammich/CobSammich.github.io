@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-09-27" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>ch06</title>
+        <link rel="stylesheet" href="../../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../index.html">Back to AI Homepage</a></p>
+<h1>Chapter 6 - Adversarial Search and Games</h1>
+<p>This section discusses competitive environments, where two or more agents have conflicting goals.
+These are known as <strong>adversarial search</strong> problems.</p>
+<h2>6.1 Game Theory</h2>
+<p>This chapter starts by generalizing the $\text{And-OR}$ search in chapter 4 to create the minimax
+search algorithm. We discuss <strong>pruning</strong>, which makes the search more efficient by ignoring portions
+of the search tree that we know do not contain the optimal move.</p>
+<p>Then the following sections will discuss these set of topics:</p>
+<ul>
+<li>6.3 - Apply a heuristic evaluation function to determine who is winning</li>
+<li>6.4 - Average the outcomes of many simulations of the game from this state till the end.</li>
+<li>6.5 - Games that have the element of chance/randomness</li>
+<li>6.6 - Games that have <strong>imperfect information</strong>, where not all information is known (like poker).</li>
+</ul>
+<p>For games, we use the term <strong>move</strong> as a synonym for "action" and <strong>position</strong> as a synonym for
+"state".</p>
+<h3>6.1.1 Two Player Zero-sum Games</h3>
+<p>These games commonly studied in the field of AI are known as deterministic, <strong>perfect information</strong>,
+<strong>zero-sum games</strong>. Perfect information because the environment is fully observable, and zero-sum
+means that an action that is good for one player is equally bad for the other player.</p>
+<p>Typically we can call out two players $\text{MAX}$ and $\text{MIN}$. A game between these two can be formed
+using the following elements:</p>
+<ul>
+<li>$S_0$: The initial state</li>
+<li>$\text{To-Move}(s)$: The player whose turn it is to move in state $s$.</li>
+<li>$\text{Actions}(s)$: The set of legal moves in state $s$.</li>
+<li>$\text{Result}(s,a)$: The transition model, which defines the state resulting from taking action
+  $a$ in state $s$.</li>
+<li>$\text{Is-Terminal}(s)$: A terminal test, which is true when the game is over and false Terminal
+  test otherwise. States where the game has ended are called terminal states.</li>
+<li>$\text{Utility}(s, p)$: A utility function (also called an objective function or payoff function),
+  which defines the final numeric value to player p when the game ends in terminal state s. In
+  chess, the outcome is a win, loss, or draw, with values 1, 0, or 1/2.2 Some games have a wider
+  range of possible outcomes—for example, the payoffs in backgammon range from 0 to 192.</li>
+</ul>
+<p>Like chapter 3, we can define the problem in a <strong>state space graph</strong>. The edges are moves and the
+vertices are states. We define the <strong>game tree</strong> as a search tree that follows every sequence of
+moves until the "terminal state". The game tree can be infinite if the state space is unbounded or
+the game allows for infinitely repeating positions.</p>
+<p>Figure 1 below shows a branch of the game tree for tic-tac-toe. In the beginning, $\text{MAX}$ has
+$9$ possible moves. Play alternates between the two agents until a lead node is reached that
+corresponds to terminal states (one player wins or all squares are filled). The number below each
+lead node indicates the value of the terminal state from the point of view of the player
+$\text{MAX}$; higher values are good for $\text{MAX}$ and bad for $\text{MIN}$.</p>
+<p><img alt="" src="./images/ch06_tic_tac_toe_initial.png" /></p>
+<p style="text-align:center">
+Figure 1. Portion of a tic-tac-toe game tree that leads to terminal states.
+</p>
+
+<p>For tic-tac-toe, there are fewer than $9! = 362,880$ terminal nodes because a game can end in less
+than 9 moves. There are actually $255,168$ possible games in tic-tac-toe from <a href="https://math.stackexchange.com/questions/269066/game-combinations-of-tic-tac-toe">this stack overflow
+answer</a>.</p>
+<h2>6.2 Optimal Decisions in Games</h2>
+<p>In our game tree search, our player always wants to find a sequence of actions that lead to a win.
+So, our $\text{MAX}$ player wants to find the optimal strategy that will respond appropriately to
+each of $\text{MIN}$'s possible moves. For games that have a binary outcome, one can use
+$\text{And-OR}$ search to generate the plan to win. For games with multiple outcome scores, we need
+a more general algorithm. Enter <strong>minimax search</strong>.</p>
+<p>Given a game tree, the optimal strategy can be determined by finding the <strong>minimax value</strong> of each
+state in the game tree, denoted $\text{Minimax}(s)$. When it is $\text{MAX}$'s turn, it prefers to
+move to a state of maximum value, and when it's $\text{MIN}$'s turn, it prefers to move to a state
+of minimum value. This comes out to the following:</p>
+<p>$$
+\displaystyle \text{Minimax}(s) = \begin{cases}
+      \text{Utility}(s, \text{MAX}) &amp; \text{if Is-Terminal}(s) \\
+      \text{max}_{a \in Actions(s)} \text{Minimax}(\text{Result}(s, a)) &amp; \text{if To-Move}(s) = \text{MAX} \\
+      \text{min}_{a \in Actions(s)} \text{Minimax}(\text{Result}(s, a)) &amp; \text{if To-Move}(s) = \text{MAX}
+\end{cases}
+$$</p>
+<p>Take the example below, in this case we have $\text{MAX}$ as the root node. It has successors B, C,
+and D, which also each have 3 more successors. Node B is trying to find the minimum value
+successor, so its minimax value is $3$. Similarly, nodes C and D have a minimax value of $2$. Node A
+wants to maximize its value, so its minimax value is $3$ (Node B).</p>
+<p><img alt="" src="./images/ch06_minimax_game_tree1.png" /></p>
+<p style="text-align:center">
+Figure 2. An example game tree with $\text{MAX}$ as the root node.
+</p>
+
+<h3>6.2.1 The Minimax Search Algorithm</h3>
+<p>Now that we can compute the minimax value for a single state using $\text{Minimax}(s)$, we want to
+be able to compute the best move for $\text{MAX}$ by trying all the actions in the game tree. The
+recursive algorithm for this is shown in Figure 3:</p>
+<p><img alt="" src="./images/ch06_minimax_pseudocode.png" /></p>
+<p style="text-align:center">
+Figure 3. The Minimax Algorithm for choosing the state with the highest $\text{Minimax}$ value.
+</p>
+
+<p>The minimax algorithm performs a complete depth-first exploration of the game tree. We know from
+chapter 3 that the time complexity of depth-first search is $O(b^m)$ and the space complexity is
+$O(bm)$ where $m$ is the maximum depth of the tree and $b$ is the number of legal moves at each
+state.</p>
+<h3>6.2.2 Optimal Decisions in Multiplayer Games</h3>
+<h3>6.2.3 Alpha-Beta Pruning</h3>
+<p>An optimization to the minimax algorithm where we choose not to "prune" nodes we know will lead to a
+bad state for our agent is known as <strong>Alpha-Beta Pruning</strong>.</p>
+<p>$\alpha$ is the value of the best choice we have found so far at any choise point along the path for
+$\text{MAX}$. $\beta$ is the value of the best choice we have found so far at any choise point along the path for
+$\text{MIN}$</p>
+<p><img alt="" src="./images/ch06_alpha_beta_pruning_pseudocode.png" /></p>
+<p style="text-align:center">
+Figure 4. Pseudocode for the alpha-beta pruning algorithm - An extension of the minimax algorithm.
+</p>
+
+<h3>6.2.4 Move Ordering</h3>
+    </body>
+</html>
+
+

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-09-28" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>ch12</title>
+        <link rel="stylesheet" href="../../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../index.html">Back to AI Homepage</a></p>
+<h1>Chapter 12 - Quantifying Uncertainty</h1>
+<blockquote>
+<p><em>I am going to try writing my notes less verbose in an attempt to be faster at note-taking.</em></p>
+</blockquote>
+<h2>12.1 Acting Under Uncertainty</h2>
+<h2>12.2 Basic Probability Notation</h2>
+<ul>
+<li>$\omega$: A single "world" or event.</li>
+<li>$\Omega$: The set of all possible "worlds" or events.</li>
+</ul>
+<h3>What Probabilities are About</h3>
+<ul>
+<li>
+<p><strong>Probability Model</strong> associates a numerical probability, $P(\omega)$ with each possible outcome.
+  The probability of all possible outcomes would sum to 1:
+$$
+\boxed{0 \le P(\omega) \le 1 \text{ for every } \omega \text{ and } \sum_{\omega in \Omega}
+P(\omega) = 1}
+$$</p>
+</li>
+<li>
+<p><strong>Unconditional Probability</strong>: Refer to degrees of belief in propositions <em>in the absence of any
+  other information</em>. For example, if we roll two dice and want to know $P(Total = 11)$. There is no
+  prior information telling us what the first die does for example.</p>
+</li>
+<li>
+<p><strong>Conditional Probability</strong>: Probability of an event occurring given that another event occurred
+  before it. For example if the first die in two rolls was a $5$, we would have $P(doubles|Die_1 =
+  5)$. $|$ is pronounced "given". The equation for evaluating conditional probabilities is
+$$
+\boxed{P(a \mid b) = \frac{P(a \cap b)}{P(b)}}
+$$
+Which can also be written in the form of the product rule:
+$$
+\boxed{P(a \cap b) = P(a \mid b) P(b)}
+$$
+In words, this can be thought of as "for $a$ and $b$ to be true, we need $b$ to be true, and we also
+need $a$ to be true given $b$".</p>
+</li>
+</ul>
+<h3>12.2.2 The Language of Propositions in Probability Assertions</h3>
+<ul>
+<li><strong>Random Variables</strong>: Variables in probability theory - always capitalized. Every random variable
+  is a function that maps from the domain of possible events, $\Omega$, to a <strong>range</strong> of possible
+  values it can be. For example, the range of $Die_1$ is $\{1, \dots, 6\}$. Values are represented
+  as lowercase letters.</li>
+<li>
+<p><strong>Boolean Variable</strong> has the range $\{true, false\}$ or the set $\{0, 1\}$. Then the variable
+  is also said to have a <strong>Bernoulli</strong> distribution. Propositions of the form $A = true$ and $A =
+  false$ are denoted as $a$ and $\neg a$.</p>
+</li>
+<li>
+<p><strong>Probability Density Function</strong>: For continuous variables, we can't write out the entire
+  distribution as a vector, because there are infinite values. Instead we can define the probability
+  that a random variable takes on some value $x$ as a parameterized function of $x$. For example
+$$
+\boxed{P(NoonTemp = x) = Uniform(x; 18C, 26C)}
+$$
+expresses that the temperature at noon is distributed uniformly between 18 and 26 degrees Celsius.</p>
+</li>
+</ul>
+<p><img alt="" src="./images/test_plot.jpg" /></p>
+    </body>
+</html>
+
+
