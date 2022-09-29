@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-08-26" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-09-28" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>index</title>
         <link rel="stylesheet" href="../../style.css" type="text/css"
@@ -40,13 +40,6 @@ yesterday. To specify which day you want to see, use the <code>-d</code> flag.</
 <li><code>y</code> - Yesterday</li>
 <li><code>T</code> - Tomorrow</li>
 </ol>
-<h2>Contiunuous Display</h2>
-<p>To continuously run the program every 10 seconds and display output. This unfortunately causes a
-flicker when clearing the terminal and running the program again. Another alternative is to use
-<code>watch</code>, but this does not preserve the color of the team names.</p>
-<div class="codehilite"><pre><span></span><code><span class="k">while</span> sleep <span class="m">10</span><span class="p">;</span> <span class="k">do</span> clear<span class="p">;</span> ./target/release/nba-scores-cli<span class="p">;</span> <span class="k">done</span>
-</code></pre></div>
-
 <h2>Team Color Values</h2>
 <p>I got the team RGB values found in <code>src/team/team_colors.rs</code> from <a href="https://teamcolorcodes.com/nba-team-color-codes/#What_Are_the_RGB_Color_Codes_Used_by_NBA_Teams">this
 site</a>.</p>
@@ -54,9 +47,9 @@ site</a>.</p>
 <p>On 3/9/2022, I implemented a program loop that continuously runs the html fetching, parsing, and
 displaying every 10 seconds. This removes the need for the continuous display section described
 above.</p>
-<p>The code now also now checks for user input to know when to exit the program. When the user presses
-the <code>q</code> key, the program will clear the terminal and end (hopefully gracefully, but I haven't made
-sure of that yet).</p>
+<p>The code now also now checks for user input asynchronously to know when to exit the program. When
+the user presses the <code>q</code> key, the program will clear the terminal and end (hopefully gracefully, but
+I haven't made sure of that yet).</p>
     </body>
 </html>
 

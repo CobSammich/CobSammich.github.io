@@ -73,7 +73,7 @@ need $a$ to be true given $b$".</p>
   false$ are denoted as $a$ and $\neg a$.</p>
 </li>
 <li>
-<p><strong>Probability Density Function</strong>: For continuous variables, we can't write out the entire
+<p><strong>Probability Density Function (PDF)</strong>: For continuous variables, we can't write out the entire
   distribution as a vector, because there are infinite values. Instead we can define the probability
   that a random variable takes on some value $x$ as a parameterized function of $x$. For example
 $$
@@ -81,8 +81,24 @@ $$
 $$
 expresses that the temperature at noon is distributed uniformly between 18 and 26 degrees Celsius.</p>
 </li>
+<li>
+<p>The probability density for a continuous random variable $X$ at value $x$ is denoted $P(X = x)$.</p>
+</li>
+<li><strong>Joint Probability Distributions</strong>: Distributions that handle multiple variables. Denoted
+  $\mathbf{P}(Event1, Event2)$. Tell us the probability of all combinations of values of $Event1$
+  and $Event2$.</li>
 </ul>
-<p><img alt="" src="./images/test_plot.jpg" /></p>
+<h3>12.2.3 Probability Axioms and their Reasonableness</h3>
+<ul>
+<li>The probability of an event, $a$, not happening is $P(\neg a) = 1 - P(a)$.</li>
+<li><strong>Inclusion-Exclusion Principle</strong>: Probability of disjunction or the probability of either event
+  $a$ or $b$ occurring:
+$$
+P(a \cup b) = P(a) + P(b) - P(a \cap b)
+$$
+This makes sense logically, because if we were to sum $P(a)$ and $P(b)$ then we would be including
+the events where both occur, therefore subtracting out the intersection is needed.</li>
+</ul>
     </body>
 </html>
 
