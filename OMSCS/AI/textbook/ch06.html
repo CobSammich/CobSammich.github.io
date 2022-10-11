@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-09-27" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-10-02" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>ch06</title>
         <link rel="stylesheet" href="../../../style.css" type="text/css"
@@ -41,8 +41,8 @@ of the search tree that we know do not contain the optimal move.</p>
 <p>These games commonly studied in the field of AI are known as deterministic, <strong>perfect information</strong>,
 <strong>zero-sum games</strong>. Perfect information because the environment is fully observable, and zero-sum
 means that an action that is good for one player is equally bad for the other player.</p>
-<p>Typically we can call out two players $\text{MAX}$ and $\text{MIN}$. A game between these two can be formed
-using the following elements:</p>
+<p>Typically we can call out two players $\text{MAX}$ and $\text{MIN}$. A game between these two can be
+formed using the following elements:</p>
 <ul>
 <li>$S_0$: The initial state</li>
 <li>$\text{To-Move}(s)$: The player whose turn it is to move in state $s$.</li>
@@ -117,8 +117,8 @@ state.</p>
 <p>An optimization to the minimax algorithm where we choose not to "prune" nodes we know will lead to a
 bad state for our agent is known as <strong>Alpha-Beta Pruning</strong>.</p>
 <p>$\alpha$ is the value of the best choice we have found so far at any choise point along the path for
-$\text{MAX}$. $\beta$ is the value of the best choice we have found so far at any choise point along the path for
-$\text{MIN}$</p>
+$\text{MAX}$. $\beta$ is the value of the best choice we have found so far at any choise point along
+the path for $\text{MIN}$</p>
 <p><img alt="" src="./images/ch06_alpha_beta_pruning_pseudocode.png" /></p>
 <p style="text-align:center">
 Figure 4. Pseudocode for the alpha-beta pruning algorithm - An extension of the minimax algorithm.

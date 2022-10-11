@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="date" content="2022-10-03" scheme="YYYY-MM-DD">
+        <meta name="viewport" content="width=device-width" />
+        <title>ch13</title>
+        <link rel="stylesheet" href="../../../style.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../../../pygmentize.css" type="text/css"
+         media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css" />
+    </head>
+    <body>
+        <script type="text/x-mathjax-config">
+          MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+        <script type="text/javascript">
+            document.querySelectorAll('pre').forEach(block => hljs.highlightBlock(block));
+        </script>
+        <p><a href="../index.html">Back to AI Homepage</a></p>
+<h1>Chapter 13 - Probabilistic Reasoning</h1>
+<p>This chapter introduces a way of representing conditional independence
+relationships in the form of <strong>Bayesian Networks</strong>.</p>
+<h2>13.1 Representing Knowledge in an Uncertain Domain</h2>
+<ul>
+<li><strong>Bayesian Network</strong>: A directed graph in which each node is annotated with
+  quantitative probability information.<ol>
+<li>Each node corresponds to a random discrete or continuous variable.</li>
+<li>Directed links connect pairs of nodes. When an arrow goes from node $X$
+   to node $Y$, $X$ is said to be a <em>parent</em> of $Y$.</li>
+<li>Each node $X_i$ has associated probability information $\theta(X_i \mid
+   Parents(X_i)$ that quantifies the effect of the parents on the node using
+   a finite number of <strong>parameters</strong>.
+Once the Bayes net topology is defined, we must then specify the local
+probability information for each variable, in the form of a conditional
+distribution given its parents.</li>
+</ol>
+</li>
+</ul>
+<p><img alt="" src="./images/ch13_bayes_net1.png" /></p>
+<p style="text-align:center">
+Figure 1. Bayes Network example.
+</p>
+
+<ul>
+<li><strong>Conditional Probability Table (CPT)</strong>: shows the conditional probability of
+  each node value for a <strong>conditioning case</strong>.</li>
+<li><strong>Conditioning Case</strong>: A possible combination of values for the parent nodes.</li>
+</ul>
+<h2>13.2 The Semantics of Bayesian Networks</h2>
+<p>The <em>semantics</em> define how the syntax corresponds to a joint distribution over
+the variables of the network.</p>
+<p>If a Bayes net contains $n$ variables, $X_1, \dots, X_n$. A generic entry in the
+joint distribution is then $P(X_1 = x_1 \cap \dots \cap X_n = x_n)$, or $P(x_1,
+\dots, x_n)$.</p>
+<p>Semantics of a Bayes net defines each entry in the joint distribution as
+$$
+\boxed{P(x_1, \dots, x_n) = \prod_{i=1}^n \theta(x_i \mid parents(X_i))}
+\tag{13.1}
+\label{eq:joint_distribution}
+$$
+where $parents(X_i)$ denotes the values of $Parents(X_i)$ that appear in $x_1,
+\dots, x_n$. Thus, each entry in the joint distribution is represented by the
+product of the appropriate elements of the local conditional distributions in
+the Bayes net.</p>
+<p>For example, using Figure 1 above, if we wanted to calculate the probability
+that the alarm has sounded, but neither a burglary nor an earthquake has
+occurred, and both John and Mary call. We would multiply the relevant entries
+from the local conditional distributions:</p>
+<p>$$
+\boxed{
+\begin{aligned}
+P(j, m, a, \neg b, \neg e) &amp;= P(j \mid a) P(m \mid a) P(a \mid \neg b \cap \neg e) P (\neg b) P(\neg e)\\
+                           &amp;= 0.90 \times 0.70 \times 0.001 \times 0.999 \times 0.998\\
+                           &amp;= 0.000628
+\end{aligned}
+}
+$$</p>
+<p>The book uses $\eqref{eq:joint_distribution}$ to prove that the parameters
+$\theta(x_i \mid parents(X_i))$ are exactly the conditional probabilities $P(x_i
+\mid parents(X_i))$ implied by the joint distribution. Therefore, we can rewrite
+$\eqref{eq:joint_distribution}$ as
+$$
+\boxed{P(x_1, \dots, x_n) = \prod_{i=1}^n P(x_i \mid parents(X_i))}
+\tag{13.2}
+\label{eq:joint_distribution2}
+$$</p>
+<h4>A Method for Constructing Bayesian Networks</h4>
+<p>We can use $\eqref{eq:joint_distribution2}$ to imply certain conditional
+independence relationships. We can write each joint probability as a conditional
+probability, which leaves us with one big product:
+$$
+\boxed{
+\begin{aligned}
+P\left(x_1, \ldots, x_n\right) &amp;=P\left(x_n \mid x_{n-1}, \ldots, x_1\right)
+P\left(x_{n-1} \mid x_{n-2}, \ldots, x_1\right) \cdots P\left(x_2 \mid x_1\right) P\left(x_1\right) \\
+    &amp;=\prod_{i=1}^n P\left(x_i \mid x_{i-1}, \ldots, x_1\right)
+\end{aligned}
+}
+$$</p>
+<p>This identity is called the <strong>chain rule</strong> and it holds for any set of random
+variables. From $\eqref{eq:joint_distribution2}$, we can see that for every
+variable $X_i$ in the network
+$$
+\boxed{
+\textbf{P}(X_i \mid X_{i-1}, \dots, X_1) = \textbf{P}(X_i \mid Parents(X_i))
+}
+\tag{13.3}
+\label{eq:joint_distribution_i}
+$$</p>
+<h4>Compactness and Node Ordering</h4>
+    </body>
+</html>
+
+

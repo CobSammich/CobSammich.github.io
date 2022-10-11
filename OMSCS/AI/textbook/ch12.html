@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-09-28" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-10-10" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>ch12</title>
         <link rel="stylesheet" href="../../../style.css" type="text/css"
@@ -31,7 +31,7 @@
 <li>$\omega$: A single "world" or event.</li>
 <li>$\Omega$: The set of all possible "worlds" or events.</li>
 </ul>
-<h3>What Probabilities are About</h3>
+<h3>12.2.1 What Probabilities are About</h3>
 <ul>
 <li>
 <p><strong>Probability Model</strong> associates a numerical probability, $P(\omega)$ with each possible outcome.
@@ -42,9 +42,9 @@ P(\omega) = 1}
 $$</p>
 </li>
 <li>
-<p><strong>Unconditional Probability</strong>: Refer to degrees of belief in propositions <em>in the absence of any
-  other information</em>. For example, if we roll two dice and want to know $P(Total = 11)$. There is no
-  prior information telling us what the first die does for example.</p>
+<p><strong>Unconditional Probability</strong>: Refer to degrees of belief in propositions (event) <em>in the absence
+  of any other information</em>. For example, if we roll two dice and want to know $P(Total = 11)$.
+  There is no prior information telling us what the first die does for example.</p>
 </li>
 <li>
 <p><strong>Conditional Probability</strong>: Probability of an event occurring given that another event occurred
@@ -94,11 +94,64 @@ expresses that the temperature at noon is distributed uniformly between 18 and 2
 <li><strong>Inclusion-Exclusion Principle</strong>: Probability of disjunction or the probability of either event
   $a$ or $b$ occurring:
 $$
-P(a \cup b) = P(a) + P(b) - P(a \cap b)
+\boxed{P(a \cup b) = P(a) + P(b) - P(a \cap b)}
 $$
 This makes sense logically, because if we were to sum $P(a)$ and $P(b)$ then we would be including
 the events where both occur, therefore subtracting out the intersection is needed.</li>
 </ul>
+<h2>12.4 Independence</h2>
+<ul>
+<li>
+<p>In cases where two events can be determined to be independent, we can say the following is true:
+$$
+\boxed{P(a \mid b) = P(a)} \text{ or } \boxed{P(b \mid a) = P(b)} \text{ or } \boxed{P(a \cap b) =
+P(a)P(b)}
+$$
+And the same can be said for variables:
+$$
+\boxed{P(X \mid Y) = P(X)} \text{ or } \boxed{P(Y \mid X) = P(Y)} \text{ or } \boxed{P(X \cap Y) =
+P(X)P(Y)}
+$$</p>
+</li>
+<li>
+<p><strong>Conditional Independence</strong>: When two variables in a joint distribution have
+  a relation to a third variable, but are independent of one another, we can
+  break apart the relationship in the following way:
+$$
+\boxed{
+\textbf{P}(X, Y \mid Z) = \textbf{P}(X \mid Z)\textbf{P}(Y \mid Z)
+}
+$$</p>
+</li>
+</ul>
+<h2>12.5 Bayes' Rule and its Use</h2>
+<ul>
+<li><strong>Bayes' Rule</strong>: Equation for computing probabilistic inference given some initial information.
+  The probability of $a$ given $b$ can be written:
+$$
+\boxed{P(b \mid a) = \frac{P(a \mid b) P(b)}{P(a)}}
+$$
+In the most readable case, we have:
+$$
+\boxed{P(cause \mid effect) = \frac{P(effect \mid cause) P(cause)}{P(effect)}}
+$$
+At first it seemed like then having to compute $P(effect \mid cause)$ was taking a step backwards,
+but this makes sense, because we often know the probabilities of the effect given the cause and we
+want to use that information to find the cause given the effect.</li>
+</ul>
+<h2>12.6 Naive Bayes Models</h2>
+<ul>
+<li>The <strong>Naive Bayes</strong> model is a full joint probability distribution written as
+$$
+\boxed{\textbf{P}(Cause, Effect_1, \dots, Effect_n) = \textbf{P}(Cause) \prod_i \textbf{P}(Effect_i \mid
+Cause)}
+$$
+The models are called "naive" because it is used in cases where the "effect" variables are not
+strictly independent given the cause variable.
+The naive Bayes model assumes that words occur independently in documents, with frequencies
+determined by the document category.</li>
+</ul>
+<p><a href="ch13.html">Chapter 13 Probabilistic Reasoning</a></p>
     </body>
 </html>
 
