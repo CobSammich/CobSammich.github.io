@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <meta name="date" content="2022-08-25" scheme="YYYY-MM-DD">
+        <meta name="date" content="2022-11-09" scheme="YYYY-MM-DD">
         <meta name="viewport" content="width=device-width" />
         <title>index</title>
         <link rel="stylesheet" href="../style.css" type="text/css"
@@ -60,6 +60,16 @@ to mount.</p>
 to find where my Beginning C++17 textbook pdf is located on my computer, I would simply input the
 following:</p>
 <div class="codehilite"><pre><span></span><code>locate <span class="s2">&quot;Beginning C++&quot;</span>
+</code></pre></div>
+
+<h2>Pacman</h2>
+<p>Obviously this is Arch specific, but I found that my <code>/var/cache/pacman/pkg/</code>
+never empties itself. This led to having 10+ cudnn patches being stored in cache
+on my disk after ~10 months. For specific reasons, I don't want to get rid of
+the whole cached directory, but I do want to remove very old instances.</p>
+<p>The following command will remove all packages except the three most recent
+versions of each package:</p>
+<div class="codehilite"><pre><span></span><code>sudo paccache -r
 </code></pre></div>
     </body>
 </html>
